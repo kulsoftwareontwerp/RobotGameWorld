@@ -29,5 +29,13 @@ public interface GUIListener {
 	 * 			A ElementAddedEvent
 	 */
 	void onElementAddedEvent(ElementAddedEvent event);
+	
+	
+	/**
+	 * Perform the needed actions in the GUI after all elements are removed from the domain.
+	 * @param 	event
+	 * 			A ElementsClearedEvent
+	 */
+	void onElementsClearedEvent(ElementsClearedEvent event);
 
 }

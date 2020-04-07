@@ -19,7 +19,7 @@ public class RobotGameWorldPredicate implements Predicate {
 	 * 
 	 * @return the SupportedPredicate associated with this RobotGameWorldPredicate
 	 */
-	public SupportedPredicates getAction() {
+	public SupportedPredicates getPredicate() {
 		return predicate;
 	}
 

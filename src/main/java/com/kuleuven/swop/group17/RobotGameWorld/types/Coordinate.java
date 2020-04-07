@@ -53,6 +53,28 @@ public class Coordinate {
 	public void setY(int y) {
 		this.y = y;
 	}
+
+	
+	
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Coordinate) {
+			Coordinate compare = (Coordinate) obj;
+			return compare.getX() == this.getX() && compare.getY()==this.getY();
+		}
+		else {
+			return false;			
+		}
+	}
+	
+	
+	
 	
 	
 	
