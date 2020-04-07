@@ -1,5 +1,6 @@
 package com.kuleuven.swop.group17.RobotGameWorld.events;
 
+import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 
 /**
@@ -10,48 +11,35 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  */
 public class RobotChangeEvent implements EventObject {
 
-	private int xCoordinate;
-	private int yCoordinate;
+	private Coordinate coordinate;
 	private Orientation orientation;
 
-
-	
 	/**
-	 * Create the ChangeEvent
+	 * Create the RobotChangeEvent
 	 * 
-	 * @param 	xCoordinate
-	 * 			The xCoordinate
-	 * @param 	yCoordinate
-	 * 			The yCoordinate
-	 * @param 	orientation
-	 * 			The orientation
+	 * @param coordinate  The coordinate to which the element was added.
+	 * @param orientation The orientation
 	 */
-	public RobotChangeEvent(int xCoordinate, int yCoordinate, Orientation orientation) {
+	public RobotChangeEvent(Coordinate coordinate, Orientation orientation) {
 		super();
-		this.xCoordinate = xCoordinate;
-		this.yCoordinate = yCoordinate;
+		this.coordinate = coordinate;
 		this.orientation = orientation;
 	}
 
 	/**
-	 * Retrieve the new X-coordinate
-	 * @return the new X-coordinate of the robot
+	 * Retrieve the coordinate of the robot.
+	 * 
+	 * @return the coordinate of the robot
 	 */
-	public int getxCoordinate() {
-		return xCoordinate;
+	public Coordinate getCoordinate() {
+
+		return new Coordinate(coordinate.getX(), coordinate.getY());
 	}
-	
-	/**
-	 * Retrieve the Y-coordinate
-	 * @return the new Y-coordinate of the  robot
-	 */
-	public int getyCoordinate() {
-		return yCoordinate;
-	}
-	
+
 	/**
 	 * Retrieve the orientation
-	 * @return the new orientation  of the robot
+	 * 
+	 * @return the new orientation of the robot
 	 */
 	public Orientation getOrientation() {
 		return orientation;

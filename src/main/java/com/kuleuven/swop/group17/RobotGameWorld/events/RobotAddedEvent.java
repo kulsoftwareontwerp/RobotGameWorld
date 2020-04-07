@@ -1,5 +1,6 @@
 package com.kuleuven.swop.group17.RobotGameWorld.events;
 
+import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 
 /**
@@ -10,41 +11,31 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  */
 public class RobotAddedEvent implements EventObject {
 
-	private int xCoordinate;
-	private int yCoordinate;
+	private Coordinate coordinate;
 	private Orientation orientation;
 	
 	/**
 	 * Create the RobotAddedEvent
 	 * 
-	 * @param 	xCoordinate
-	 * 			The xCoordinate
-	 * @param 	yCoordinate
-	 * 			The yCoordinate
+	 * @param 	coordinate
+	 * 			The coordinate to which the element was added.
 	 * @param 	orientation
 	 * 			The orientation
 	 */
-	public RobotAddedEvent(int xCoordinate, int yCoordinate, Orientation orientation) {
+	public RobotAddedEvent(Coordinate coordinate, Orientation orientation) {
 		super();
-		this.xCoordinate = xCoordinate;
-		this.yCoordinate = yCoordinate;
+		this.coordinate = coordinate;
 		this.orientation = orientation;
 	}
 	
-	/**
-	 * Retrieve the X-coordinate
-	 * @return the X-coordinate of the added robot
-	 */
-	public int getxCoordinate() {
-		return xCoordinate;
-	}
+
 	
 	/**
-	 * Retrieve the Y-coordinate
-	 * @return the Y-coordinate of the added robot
+	 * Retrieve the coordinate
+	 * @return the coordinate of the added robot
 	 */
-	public int getyCoordinate() {
-		return yCoordinate;
+	public Coordinate getCoordinate() {
+		return new Coordinate(coordinate.getX(), coordinate.getY());
 	}
 	
 	/**

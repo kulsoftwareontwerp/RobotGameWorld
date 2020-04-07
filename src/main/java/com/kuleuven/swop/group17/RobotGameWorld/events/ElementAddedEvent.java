@@ -1,5 +1,6 @@
 package com.kuleuven.swop.group17.RobotGameWorld.events;
 
+import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 
 /**
@@ -10,42 +11,30 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
  */
 public class ElementAddedEvent implements EventObject {
 
-	private int xCoordinate;
-	private int yCoordinate;
+	private Coordinate coordinate;
 	private ElementType type;
 	
 	/**
 	 * Create the ElementAddedEvent
 	 * 
-	 * @param 	xCoordinate
-	 * 			The xCoordinate
-	 * @param 	yCoordinate
-	 * 			The yCoordinate
+	 * @param 	coordinate
+	 * 			The coordinate to which the element was added.
 	 * @param 	type
 	 * 			The ElementType
 	 */
-	public ElementAddedEvent(int xCoordinate, int yCoordinate, ElementType type) {
+	public ElementAddedEvent(Coordinate coordinate, ElementType type) {
 		super();
-		this.xCoordinate = xCoordinate;
-		this.yCoordinate = yCoordinate;
+		this.coordinate = coordinate;
 		this.type = type;
 	}
 
-
 	/**
-	 * Retrieve the X-coordinate
-	 * @return the X-coordinate of the added element
+	 * Retrieve the coordinate
+	 * @return the coordinate of the added element
 	 */
-	public int getxCoordinate() {
-		return xCoordinate;
-	}
-
-	/**
-	 * Retrieve the Y-coordinate
-	 * @return the Y-coordinate of the added element
-	 */
-	public int getyCoordinate() {
-		return yCoordinate;
+	public Coordinate getCoordinate() {
+		
+		return new Coordinate(coordinate.getX(), coordinate.getY());
 	}
 
 	/**
