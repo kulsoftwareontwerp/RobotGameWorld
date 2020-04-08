@@ -14,7 +14,7 @@ public class CellFactory {
 	public CellFactory() {
 	}
 	
-	private final int OFFSET_GAMEAREA_CELLS = 4;
+
 
 	/**
 	 * Create a cell with the given ElementType,Orientation and Coordinate
@@ -29,16 +29,8 @@ public class CellFactory {
 		if(coordinate == null) {
 			throw new NullPointerException("coordinate can't be null.");
 		}
-		coordinate.setY(coordinate.getY()+OFFSET_GAMEAREA_CELLS);
-		
-		Cell cell;	
-		
 
-
-		cell = new Cell(coordinate, orientation,type);
-		
-
-		return cell;
+		return new Cell(coordinate, orientation,type);
 	}
 	
 	/**

@@ -43,10 +43,10 @@ public class ElementRepository {
 	public Set<Element> getElements(Coordinate coordinate) {
 		HashSet<Element> resultSet = new HashSet<Element>();
 		
-		Iterator<Element> iterator = elements.iterator();
+		Iterator<Element> iterator = getElements().iterator();
 		while(iterator.hasNext()) {
 			Element element = iterator.next();
-			if(element.getCoordinate() == coordinate) {
+			if(element.getCoordinate().equals(coordinate)) {
 				resultSet.add(element);
 			}
 		}

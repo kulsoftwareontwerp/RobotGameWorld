@@ -31,7 +31,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
-	private RobotCanvas robotGameArea;
+	private RobotCanvas robotCanvas;
 	
 	/**
 	 * Create a RobotGameWorld
@@ -39,23 +39,27 @@ public class RobotGameWorld implements GameWorld {
 	public RobotGameWorld() {
 		super();
 		ElementRepository elementRepository= new ElementRepository();
-		robotGameArea = new RobotCanvas();
+		robotCanvas = new RobotCanvas();
 		
 		robotController = new RobotController(elementRepository);
 		elementController=new ElementController(elementRepository);
 		
-		initialiseRobotGameWorld();
+		
+		robotController.addListener(robotCanvas);
+		elementController.addListener(robotCanvas);
+		
+		
+		initializeRobotGameWorld();
 	}
 	
 	
-	private void initialiseRobotGameWorld() {
+	private void initializeRobotGameWorld() {
 		robotController.addRobot(new Coordinate(2, 3),Orientation.UP);
 		elementController.addElement(ElementType.WALL, new Coordinate(0,0));
 		elementController.addElement(ElementType.WALL, new Coordinate(4,0));
 		elementController.addElement(ElementType.WALL, new Coordinate(1,2));
 		elementController.addElement(ElementType.WALL, new Coordinate(2,2));
 		elementController.addElement(ElementType.WALL, new Coordinate(3,2));
-		elementController.addElement(ElementType.WALL, new Coordinate(2,1));
 	}
 	
 	
@@ -152,7 +156,7 @@ public class RobotGameWorld implements GameWorld {
 	 * @param graphics the graphics object on which the gameWorld should be painted.
 	 */
 	public void paint(Graphics graphics) {
-		robotGameArea.paint(graphics);
+		robotCanvas.paint(graphics);
 	}
 
 	

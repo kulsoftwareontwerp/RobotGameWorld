@@ -57,20 +57,31 @@ public class Coordinate {
 	
 	
 	
+
+
 	@Override
 	public int hashCode() {
-		return super.hashCode();
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof Coordinate) {
-			Coordinate compare = (Coordinate) obj;
-			return compare.getX() == this.getX() && compare.getY()==this.getY();
-		}
-		else {
-			return false;			
-		}
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Coordinate other = (Coordinate) obj;
+		if (x != other.x)
+			return false;
+		if (y != other.y)
+			return false;
+		return true;
 	}
 	
 	

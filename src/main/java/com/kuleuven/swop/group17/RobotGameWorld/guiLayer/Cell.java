@@ -19,7 +19,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  */
 public class Cell {
 
-	private static final int cellSize = 50;
+
 	private ElementType type;
 	private String resourcePath;
 	private Coordinate coordinate;
@@ -48,19 +48,31 @@ public class Cell {
 		if (coordinate == null) {
 			throw new NullPointerException("coordinate can't be null.");
 		}
-		coordinate.setX(coordinate.getX() * cellSize);
-		coordinate.setY(coordinate.getY() * cellSize);
+		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
 
 		this.coordinate = coordinate;
 	}
 
 	/**
-	 * Retrieve the coordinate for this cell.
+	 * Change the coordinate of this cell with the given offset.
+	 * 
+	 * @param offset The offset to adapt the coordinates with.
+	 */
+	public void setCoordinateOffset(Coordinate offset) {
+		Coordinate copy = new Coordinate(offset.getX(), offset.getY());
+
+		coordinate.setX(coordinate.getX() + copy.getX());
+		coordinate.setY(coordinate.getY() + copy.getY());
+	}
+
+	/**
+	 * Retrieve the coordinate for this cell
 	 * 
 	 * @return the coordinate for this cell.
 	 */
 	public Coordinate getCoordinate() {
-		return coordinate;
+		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
+		return copy;
 	}
 
 	/**
@@ -89,14 +101,16 @@ public class Cell {
 
 	/**
 	 * Retrieve the orientation associated with this Cell
+	 * 
 	 * @return the orientation associated with this Cell
 	 */
-	public Orientation getOrientation() {		
+	public Orientation getOrientation() {
 		return orientation;
 	}
 
 	/**
 	 * Set the orientation associated with this Cell
+	 * 
 	 * @param orientation The new orientation to be associated with this Cell
 	 */
 	public void setOrientation(Orientation orientation) {
@@ -115,8 +129,10 @@ public class Cell {
 
 	/**
 	 * Retrieve the image associated with this Cell
+	 * 
 	 * @return the image associated with this Cell
-	 * @throws IOException  if an error occurs during reading or when notable to create required ImageInputStream
+	 * @throws IOException if an error occurs during reading or when notable to
+	 *                     create required ImageInputStream
 	 */
 	public BufferedImage getImage() throws IOException {
 		BufferedImage image;
@@ -163,8 +179,5 @@ public class Cell {
 			return false;
 		return true;
 	}
-	
-	
-	
 
 }
