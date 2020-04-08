@@ -32,6 +32,8 @@ public class ElementController implements GUISubject {
 	ElementController(ElementRepository elementRepository) {
 		guiListeners = new HashSet<GUIListener>();
 		this.elementRepository = elementRepository;
+		this.guiListeners=new HashSet<GUIListener>();
+
 	}
 
 	private void fireElementAddedEvent(ElementType element, Coordinate coordinate) {

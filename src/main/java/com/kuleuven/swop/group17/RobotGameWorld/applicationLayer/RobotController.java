@@ -1,6 +1,7 @@
 package com.kuleuven.swop.group17.RobotGameWorld.applicationLayer;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class RobotController implements GUISubject {
 	public RobotController(ElementRepository elementRepository) {
 		super();
 		this.elementRepository = elementRepository;
+		this.guiListeners=new HashSet<GUIListener>();
 	}
 
 	private void fireRobotAddedEvent(Coordinate coordinate, Orientation orientation) {

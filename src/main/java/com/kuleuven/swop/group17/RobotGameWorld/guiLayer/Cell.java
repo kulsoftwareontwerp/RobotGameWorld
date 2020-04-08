@@ -45,7 +45,7 @@ public class Cell {
 	 * @param coordinate The coordinate to set this cell to.
 	 */
 	public void setCoordinate(Coordinate coordinate) {
-		if (coordinate == null || type == null) {
+		if (coordinate == null) {
 			throw new NullPointerException("coordinate can't be null.");
 		}
 		coordinate.setX(coordinate.getX() * cellSize);
