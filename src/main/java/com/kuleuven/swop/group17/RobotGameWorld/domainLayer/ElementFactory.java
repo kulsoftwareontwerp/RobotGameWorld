@@ -4,7 +4,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 /**
  * The ElementFactory is responsible for creating elements in the domain.
- * coordinate.
+ * 
  * 
  * @version 0.1
  * @author group17
@@ -19,7 +19,7 @@ public class ElementFactory {
 	 * @param type
 	 * @param coordinate
 	 * @throws 	IllegalArgumentException
-	 * 			thrown when type is null.
+	 * 			thrown when type is null or sand.
 	 */
 	public Element createElement(ElementType type, Coordinate coordinate) {
 		Element element;
@@ -34,7 +34,7 @@ public class ElementFactory {
 			element=new Wall(coordinate);
 			break;
 		default:
-			throw new IllegalArgumentException("Unexpected value: " + type);
+			throw new IllegalArgumentException("Illegal elementType to create: " + type);
 		}
 		
 		return element;

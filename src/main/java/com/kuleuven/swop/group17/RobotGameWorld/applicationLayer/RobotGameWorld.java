@@ -10,7 +10,10 @@ import com.kuleuven.swop.group17.GameWorldApi.Predicate;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.ElementRepository;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
+import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas;
+import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
+import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
@@ -28,12 +31,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
-
-	
-	
-	
-	
-	
+	private RobotCanvas robotGameArea;
 	
 	/**
 	 * Create a RobotGameWorld
@@ -41,12 +39,24 @@ public class RobotGameWorld implements GameWorld {
 	public RobotGameWorld() {
 		super();
 		ElementRepository elementRepository= new ElementRepository();
-
+		robotGameArea = new RobotCanvas();
 		
 		robotController = new RobotController(elementRepository);
 		elementController=new ElementController(elementRepository);
+		
+		initialiseRobotGameWorld();
 	}
 	
+	
+	private void initialiseRobotGameWorld() {
+		robotController.addRobot(new Coordinate(2, 3),Orientation.UP);
+		elementController.addElement(ElementType.WALL, new Coordinate(0,0));
+		elementController.addElement(ElementType.WALL, new Coordinate(4,0));
+		elementController.addElement(ElementType.WALL, new Coordinate(1,2));
+		elementController.addElement(ElementType.WALL, new Coordinate(2,2));
+		elementController.addElement(ElementType.WALL, new Coordinate(3,2));
+		elementController.addElement(ElementType.WALL, new Coordinate(2,1));
+	}
 	
 	
 
@@ -142,8 +152,7 @@ public class RobotGameWorld implements GameWorld {
 	 * @param graphics the graphics object on which the gameWorld should be painted.
 	 */
 	public void paint(Graphics graphics) {
-		// TODO Auto-generated method stub
-
+		robotGameArea.paint(graphics);
 	}
 
 	

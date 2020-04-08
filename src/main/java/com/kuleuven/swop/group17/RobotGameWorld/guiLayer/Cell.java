@@ -1,89 +1,170 @@
 package com.kuleuven.swop.group17.RobotGameWorld.guiLayer;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
+
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
 
+import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
+import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
+import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 
+/**
+ * A Cell is the visual representation of an Element. No element corresponds to
+ * a cell with ElementType sand.
+ * 
+ * @version 0.1
+ * @author group17
+ */
+public class Cell {
 
-public class Cell implements Constants{
-
-	private int Xcoord;
-	private int Ycoord;
-	private String type;
+	private static final int cellSize = 50;
+	private ElementType type;
 	private String resourcePath;
-	private BufferedImage image;
+	private Coordinate coordinate;
+	private Orientation orientation;
 
-	public Cell(int x, int y, String type) {
-		y+= OFFSET_GAMEAREA_CELLS;
-		
-		setXcoord(x);
-		setYcoord(y);
+	/**
+	 * Create a cell with the given ElementType,Orientation and Coordinate
+	 * 
+	 * @param type        The ElementType corresponding to the Cell.
+	 * @param coordinate  The coordinate of the cell.
+	 * @param orientation The orientation of the cell
+	 * @return The cell corresponding to the given parameters.
+	 */
+	public Cell(Coordinate coordinate, Orientation orientation, ElementType type) {
+		setCoordinate(coordinate);
 		setType(type);
+		setOrientation(orientation);
 	}
 
-	public int getXcoord() {
-		return Xcoord;
+	/**
+	 * Set the Coordinate of this Cell.
+	 * 
+	 * @param coordinate The coordinate to set this cell to.
+	 */
+	public void setCoordinate(Coordinate coordinate) {
+		if (coordinate == null || type == null) {
+			throw new NullPointerException("coordinate can't be null.");
+		}
+		coordinate.setX(coordinate.getX() * cellSize);
+		coordinate.setY(coordinate.getY() * cellSize);
+
+		this.coordinate = coordinate;
 	}
 
-	public void setXcoord(int xcoord) {
-
-		int x = xcoord * 50;
-		Xcoord = x;
+	/**
+	 * Retrieve the coordinate for this cell.
+	 * 
+	 * @return the coordinate for this cell.
+	 */
+	public Coordinate getCoordinate() {
+		return coordinate;
 	}
 
-	public int getYcoord() {
-		return Ycoord;
-	}
-
-	public void setYcoord(int ycoord) {
-		int y = (ycoord * 50);
-		Ycoord = y;
-	}
-
-	public String getType() {
+	/**
+	 * Retrieve the type of this Cell
+	 * 
+	 * @return the type of this Cell.
+	 */
+	public ElementType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	/**
+	 * Set the type of this cell
+	 * 
+	 * @param type The elementType to set the type of this cell to.
+	 */
+	public void setType(ElementType type) {
 		if (type == null) {
-			this.type = "sand";
-		} else {
-			this.type = type;
+			type = ElementType.SAND;
 		}
-		setResourcePath("images/"+ getType() + ".png");
+		this.type = type;
 
+		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
 
+	}
+
+	/**
+	 * Retrieve the orientation associated with this Cell
+	 * @return the orientation associated with this Cell
+	 */
+	public Orientation getOrientation() {		
+		return orientation;
+	}
+
+	/**
+	 * Set the orientation associated with this Cell
+	 * @param orientation The new orientation to be associated with this Cell
+	 */
+	public void setOrientation(Orientation orientation) {
+		this.orientation = orientation;
+		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
+	}
+
+	private String getResourcePath() {
+		return resourcePath;
+	}
+
+	private void setResourcePath(String resourcePath) {
+		this.resourcePath = resourcePath;
+
+	}
+
+	/**
+	 * Retrieve the image associated with this Cell
+	 * @return the image associated with this Cell
+	 * @throws IOException  if an error occurs during reading or when notable to create required ImageInputStream
+	 */
+	public BufferedImage getImage() throws IOException {
+		BufferedImage image;
 		InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
-	
 
 		if (in == null) {
 			throw new IllegalArgumentException("image for Cell is not found ");
 		} else {
 			try {
-				this.image = ImageIO.read(in);
+				image = ImageIO.read(in);
 			} catch (IOException e) {
 				System.err.println("Got an error while loading in image");
+				throw e;
 			}
 		}
 
-	}
-
-	public String getResourcePath() {
-		return resourcePath;
-	}
-
-	public void setResourcePath(String resourcePath) {
-		this.resourcePath = resourcePath;
-	}
-
-	public BufferedImage getImage() {
 		return image;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((coordinate == null) ? 0 : coordinate.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cell other = (Cell) obj;
+		if (coordinate == null) {
+			if (other.coordinate != null)
+				return false;
+		} else if (!coordinate.equals(other.coordinate))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+	
+	
+	
 
 }
