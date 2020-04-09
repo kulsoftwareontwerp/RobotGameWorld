@@ -32,7 +32,8 @@ public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
 	private RobotCanvas robotCanvas;
-	private ControllerFactory factory;
+	private RobotGameWorldSnapshotFactory snapshotFactory;
+
 	
 	/**
 	 * Create a RobotGameWorld
@@ -40,21 +41,37 @@ public class RobotGameWorld implements GameWorld {
 	public RobotGameWorld() {
 		super();
 		
-		factory = new ControllerFactory();
-		
 		ElementRepository elementRepository= new ElementRepository();
+		
+		RobotController robotController = new RobotController(elementRepository);
+		ElementController elementController =new ElementController(elementRepository);
+		RobotGameWorldSnapshotFactory snapshotFactory= new RobotGameWorldSnapshotFactory();
+		createRobotGameWorld(robotController,elementController,snapshotFactory);
+		
+	}
+	
+	
+	// This private constructor is called using reflection by RobotGameWorldTest to test the initialization of construction of the class.
+	@SuppressWarnings("unused")
+	private RobotGameWorld(RobotController robotController,ElementController elementController,RobotGameWorldSnapshotFactory snapshotFactory){
+		super();
+		createRobotGameWorld(robotController, elementController,snapshotFactory);
+	}
+	
+	
+	private void createRobotGameWorld(RobotController robotController,ElementController elementController,RobotGameWorldSnapshotFactory snapshotFactory){
 		robotCanvas = new RobotCanvas();
+		this.snapshotFactory=snapshotFactory;
+		this.elementController=elementController;
+		this.robotController=robotController;
 		
-		robotController = factory.createRobotController(elementRepository);
-		elementController=factory.createElementController(elementRepository);
-		
-		
-		robotController.addListener(robotCanvas);
-		elementController.addListener(robotCanvas);
+		this.robotController.addListener(robotCanvas);
+		this.elementController.addListener(robotCanvas);
 		
 		
 		initializeRobotGameWorld();
 	}
+	
 	
 	
 	private void initializeRobotGameWorld() {
@@ -78,7 +95,7 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       gameWorld.
 	 */
 	public void performAction(Action action) throws UnsupportedOperationException {
-		if (action.getClass() != RobotGameWorldAction.class) {
+		if (action==null || action.getClass() != RobotGameWorldAction.class) {
 			throw new UnsupportedOperationException("The given action is not a supported action for a RobotGameWorld.");
 		}
 		RobotGameWorldAction robotAction = (RobotGameWorldAction) action;
@@ -106,7 +123,7 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       gameWorld.
 	 */
 	public Boolean evaluate(Predicate predicate) throws UnsupportedOperationException {
-		if (predicate.getClass() != RobotGameWorldPredicate.class) {
+		if (predicate==null || predicate.getClass() != RobotGameWorldPredicate.class) {
 			throw new UnsupportedOperationException("The given predicate is not a supported predicate for a RobotGameWorld.");
 		}
 		RobotGameWorldPredicate robotPredicate = (RobotGameWorldPredicate) predicate;
@@ -127,7 +144,7 @@ public class RobotGameWorld implements GameWorld {
 	 * @return a non inspectable snapshot with current state of the gameWorld
 	 */
 	public GameWorldSnapshot saveState() {
-		return new RobotGameWorldSnapshot(elementController.getElements());
+		return  snapshotFactory.createSnapshot(elementController.getElements());
 	}
 
 	
