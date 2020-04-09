@@ -5,6 +5,7 @@ package com.kuleuven.swop.group17.RobotGameWorld.applicationLayer;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.*;
 
 import java.lang.reflect.Field;
 
@@ -16,8 +17,12 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.internal.matchers.Any;
+import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
 import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas;
 
 /**
@@ -63,24 +68,12 @@ public class RobotGameWorldTest {
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#RobotGameWorld()}.
 	 */
 	@Test
-	public void testRobotGameWorld() {
+	public void testRobotGameWorldFieldsInitialised() {
 		// The constructor of the RobotGameWorld is responsible for creating the
 		// RobotController, the ElementController, the elementRepository and the
 		// RobotCanvas.
-		// It should also add the correct listeners to the needed controllers.
-		// At last The RobotGameWorld itself is also initialized by adding elements and
-		// a robot.
 
 		RobotGameWorld newWorld = new RobotGameWorld();
-		for(Field f : RobotGameWorld.class.getDeclaredFields()) {
-			f.setAccessible(true);
-			try {
-				System.out.println(f.getName()+ " " +f.get(newWorld));
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 		
 		try {
 			Field f =  RobotGameWorld.class.getDeclaredField("robotController");
@@ -89,9 +82,6 @@ public class RobotGameWorldTest {
 			f =  RobotGameWorld.class.getDeclaredField("elementController");
 			f.setAccessible(true);
 			assertTrue("ElementController was not initialised", f.get(newWorld) != null);
-//			f =  RobotGameWorld.class.getDeclaredField("elementRepository");
-//			f.setAccessible(true);
-//			assertTrue("ElementRepository was not initialised", f.get(newWorld) != null);
 			f =  RobotGameWorld.class.getDeclaredField("robotCanvas");
 			f.setAccessible(true);
 			assertTrue("RobotCanvas was not initialised", f.get(newWorld) != null);
@@ -99,10 +89,26 @@ public class RobotGameWorldTest {
 			fail("One or more of the required fields were not declared.");
 		}
 
-//		RobotGameWorld world = new RobotGameWorld();
-//		fail("Not yet implemented");
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#RobotGameWorld()}.
+	 */
+	@Test
+	public void testRobotGameWorldListenersAdded() {
+		// The constructor should also add the correct listeners to the needed controllers.
+		// At last The RobotGameWorld itself is also initialized by adding elements and
+		// a robot.
+		
+
+		Mockito.verify(elementController).addListener(any(GUIListener.class));
+		Mockito.verify(robotController).addListener(any(GUIListener.class));
+		
+
+	}
+	
+	
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#performAction(com.kuleuven.swop.group17.GameWorldApi.Action)}.

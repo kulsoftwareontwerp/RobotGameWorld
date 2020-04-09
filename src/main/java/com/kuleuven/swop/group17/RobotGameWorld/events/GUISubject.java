@@ -13,13 +13,13 @@ public interface GUISubject {
 	 * @param 	listener
 	 * 			The listener to be added.
 	 */
-	void removeListener(GUIListener listener);
+	void addListener(GUIListener listener);
 
 	/**
 	 * Remove a GUIListener
 	 * @param 	listener
 	 * 			The listener to be removed.
 	 */
-	void addListener(GUIListener listener);
+	void removeListener(GUIListener listener);
 
 }
