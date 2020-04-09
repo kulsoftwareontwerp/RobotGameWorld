@@ -17,7 +17,7 @@ public abstract class Element {
 	/**
 	 * Create an element given a certain coordinate
 	 * 
-	 * @param coordinate
+	 * @param coordinate the coordinate for this element.
 	 */
 	public Element(Coordinate coordinate) {
 		setCoordinate(coordinate);

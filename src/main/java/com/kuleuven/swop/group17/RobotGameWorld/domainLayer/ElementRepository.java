@@ -55,7 +55,7 @@ public class ElementRepository {
 	}
 
 	/**
-	 * Add an element to the elementRepository.
+	 * Add an element to the gameWorld.
 	 * @param type	The type of the element.
 	 * @param coordinate	The coordinate of the element.
 	 */
@@ -65,8 +65,8 @@ public class ElementRepository {
 	}
 	
 	/**
-	 * Retrieve all elements in the elementRepository.
-	 * @return
+	 * Retrieve all elements in the gameWorld.
+	 * @return all elements in the gameWorld.
 	 */
 	public Set<Element> getElements() {
 		return new HashSet<Element>(elements);

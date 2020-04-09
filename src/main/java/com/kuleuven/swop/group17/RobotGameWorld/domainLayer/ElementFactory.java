@@ -15,9 +15,9 @@ public class ElementFactory {
 	}
 
 	/**
-	 * 
-	 * @param type
-	 * @param coordinate
+	 * Create an element with the given type and coordinate.
+	 * @param type	The type to set this element to.
+	 * @param coordinate	The coordinate to set this element to.
 	 * @throws 	IllegalArgumentException
 	 * 			thrown when type is null or sand.
 	 */

@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.kuleuven.swop.group17.RobotGameWorld.applicationLayer"},{"l":"com.kuleuven.swop.group17.RobotGameWorld.domainLayer"},{"l":"com.kuleuven.swop.group17.RobotGameWorld.events"},{"l":"com.kuleuven.swop.group17.RobotGameWorld.guiLayer"},{"l":"com.kuleuven.swop.group17.RobotGameWorld.types"}]

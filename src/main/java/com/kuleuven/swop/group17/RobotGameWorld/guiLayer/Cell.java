@@ -31,7 +31,6 @@ public class Cell {
 	 * @param type        The ElementType corresponding to the Cell.
 	 * @param coordinate  The coordinate of the cell.
 	 * @param orientation The orientation of the cell
-	 * @return The cell corresponding to the given parameters.
 	 */
 	public Cell(Coordinate coordinate, Orientation orientation, ElementType type) {
 		setCoordinate(coordinate);

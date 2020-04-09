@@ -7,7 +7,7 @@ public class RobotGameWorldPredicate implements Predicate {
 
 	/**
 	 * Create a RobotGameWorldPredicate
-	 * @param action the SupportedPredicates associated with this RobotGameWorldPredicate. 
+	 * @param predicate the SupportedPredicate associated with this RobotGameWorldPredicate. 
 	 */
 	public RobotGameWorldPredicate(SupportedPredicates predicate) {
 		super();

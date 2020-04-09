@@ -13,6 +13,10 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 public class Robot extends Element implements SolidElement {
 	private Orientation orientation;
 
+	/**
+	 * Create a Robot element.
+	 * @param coordinate The coordinate for this robot.
+	 */
 	public Robot(Coordinate coordinate) {
 		super(coordinate);
 		this.orientation=null;
