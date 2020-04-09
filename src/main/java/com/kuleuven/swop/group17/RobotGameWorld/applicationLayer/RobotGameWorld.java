@@ -32,17 +32,21 @@ public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
 	private RobotCanvas robotCanvas;
+	private ControllerFactory factory;
 	
 	/**
 	 * Create a RobotGameWorld
 	 */
 	public RobotGameWorld() {
 		super();
+		
+		factory = new ControllerFactory();
+		
 		ElementRepository elementRepository= new ElementRepository();
 		robotCanvas = new RobotCanvas();
 		
-		robotController = new RobotController(elementRepository);
-		elementController=new ElementController(elementRepository);
+		robotController = factory.createRobotController(elementRepository);
+		elementController=factory.createElementController(elementRepository);
 		
 		
 		robotController.addListener(robotCanvas);
