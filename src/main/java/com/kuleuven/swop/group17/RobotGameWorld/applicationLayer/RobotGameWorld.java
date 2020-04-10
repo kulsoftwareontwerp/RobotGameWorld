@@ -19,7 +19,6 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 
-
 /**
  * A GameWorld is described by a GameWorldType. GameWorlds are able to perform
  * Actions, evaluate predicates, save and restore their state and draw
@@ -32,58 +31,51 @@ public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
 	private RobotCanvas robotCanvas;
-	private RobotGameWorldSnapshotFactory snapshotFactory;
+	private DependencyFactory factory;
 
-	
 	/**
 	 * Create a RobotGameWorld
 	 */
 	public RobotGameWorld() {
 		super();
-		
-		ElementRepository elementRepository= new ElementRepository();
-		
+
+		ElementRepository elementRepository = new ElementRepository();
 		RobotController robotController = new RobotController(elementRepository);
-		ElementController elementController =new ElementController(elementRepository);
-		RobotGameWorldSnapshotFactory snapshotFactory= new RobotGameWorldSnapshotFactory();
-		createRobotGameWorld(robotController,elementController,snapshotFactory);
-		
+		ElementController elementController = new ElementController(elementRepository);
+		createRobotGameWorld(robotController, elementController, new DependencyFactory(), new RobotCanvas());
+
 	}
-	
-	
-	// This private constructor is called using reflection by RobotGameWorldTest to test the initialization of construction of the class.
+
+	// This private constructor is called using reflection by RobotGameWorldTest to
+	// initialize the fields with mocks.
 	@SuppressWarnings("unused")
-	private RobotGameWorld(RobotController robotController,ElementController elementController,RobotGameWorldSnapshotFactory snapshotFactory){
+	private RobotGameWorld(RobotController robotController, ElementController elementController,
+			DependencyFactory factory, RobotCanvas robotCanvas) {
 		super();
-		createRobotGameWorld(robotController, elementController,snapshotFactory);
+		createRobotGameWorld(robotController, elementController, factory, robotCanvas);
 	}
-	
-	
-	private void createRobotGameWorld(RobotController robotController,ElementController elementController,RobotGameWorldSnapshotFactory snapshotFactory){
-		robotCanvas = new RobotCanvas();
-		this.snapshotFactory=snapshotFactory;
-		this.elementController=elementController;
-		this.robotController=robotController;
-		
+
+	private void createRobotGameWorld(RobotController robotController, ElementController elementController,
+			DependencyFactory factory, RobotCanvas robotCanvas) {
+		this.robotCanvas = robotCanvas;
+		this.factory = factory;
+		this.elementController = elementController;
+		this.robotController = robotController;
+
 		this.robotController.addListener(robotCanvas);
 		this.elementController.addListener(robotCanvas);
-		
-		
+
 		initializeRobotGameWorld();
 	}
-	
-	
-	
+
 	private void initializeRobotGameWorld() {
-		robotController.addRobot(new Coordinate(2, 3),Orientation.UP);
-		elementController.addElement(ElementType.WALL, new Coordinate(0,0));
-		elementController.addElement(ElementType.WALL, new Coordinate(4,0));
-		elementController.addElement(ElementType.WALL, new Coordinate(1,2));
-		elementController.addElement(ElementType.WALL, new Coordinate(2,2));
-		elementController.addElement(ElementType.WALL, new Coordinate(3,2));
+		robotController.addRobot(new Coordinate(2, 3), Orientation.UP);
+		elementController.addElement(ElementType.WALL, new Coordinate(0, 0));
+		elementController.addElement(ElementType.WALL, new Coordinate(4, 0));
+		elementController.addElement(ElementType.WALL, new Coordinate(1, 2));
+		elementController.addElement(ElementType.WALL, new Coordinate(2, 2));
+		elementController.addElement(ElementType.WALL, new Coordinate(3, 2));
 	}
-	
-	
 
 	/**
 	 * Perform the given action on the gameWorld.
@@ -95,7 +87,11 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       gameWorld.
 	 */
 	public void performAction(Action action) throws UnsupportedOperationException {
-		if (action==null || action.getClass() != RobotGameWorldAction.class) {
+		if (action == null) {
+			throw new NullPointerException("The given action can't be null");
+
+		}
+		if (!(action instanceof RobotGameWorldAction)) {
 			throw new UnsupportedOperationException("The given action is not a supported action for a RobotGameWorld.");
 		}
 		RobotGameWorldAction robotAction = (RobotGameWorldAction) action;
@@ -121,21 +117,28 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       listed in the supportedPredicates of
 	 *                                       the corresponding gameWorldType of this
 	 *                                       gameWorld.
+	 * @throws NullPointerException          when the given predicate is null.
+	 * @return the evaluation of the given predicate.
 	 */
 	public Boolean evaluate(Predicate predicate) throws UnsupportedOperationException {
-		if (predicate==null || predicate.getClass() != RobotGameWorldPredicate.class) {
-			throw new UnsupportedOperationException("The given predicate is not a supported predicate for a RobotGameWorld.");
+		if (predicate == null) {
+			throw new NullPointerException("The given predicate can't be null");
+		}
+
+		if (!(predicate instanceof RobotGameWorldPredicate)) {
+			throw new UnsupportedOperationException(
+					"The given predicate is not a supported predicate for a RobotGameWorld.");
 		}
 		RobotGameWorldPredicate robotPredicate = (RobotGameWorldPredicate) predicate;
-		
-		switch(robotPredicate.getPredicate()) {
+
+		switch (robotPredicate.getPredicate()) {
 		case WALLINFRONT:
 			return robotController.checkIfWallInFront();
 		default:
 			return false;
-		
+
 		}
-		
+
 	}
 
 	/**
@@ -144,50 +147,56 @@ public class RobotGameWorld implements GameWorld {
 	 * @return a non inspectable snapshot with current state of the gameWorld
 	 */
 	public GameWorldSnapshot saveState() {
-		return  snapshotFactory.createSnapshot(elementController.getElements());
+		return factory.createSnapshot(elementController.getElements());
 	}
 
-	
 	/**
 	 * Set the state of the gameWorld to the given gameWorldState
 	 * 
 	 * @param state the state to which the gameWorld should be set.
 	 * @throws IllegalArgumentException when the given state is not a state of this
 	 *                                  gameWorld.
+	 * @throws NullPointerException     when the given GameWorlSnapshot is null.
 	 */
 	public void restoreState(GameWorldSnapshot state) throws IllegalArgumentException {
-		if (state.getClass() != RobotGameWorldSnapshot.class) {
-			throw new IllegalArgumentException("The given GameWorldSnapshot is not a valid snapshot for a RobotGameWorld.");
+		if (state == null) {
+			throw new NullPointerException("The given GameWorldSnapshot can't be null");
+		}
+		if (!(state instanceof RobotGameWorldSnapshot)) {
+			throw new IllegalArgumentException(
+					"The given GameWorldSnapshot is not a valid snapshot for a RobotGameWorld.");
 		}
 		elementController.clearElements();
-		for(Element element : ((RobotGameWorldSnapshot) state).getElements()) {
-			if(element.getType()==ElementType.ROBOT) {
+		for (Element element : ((RobotGameWorldSnapshot) state).getElements()) {
+			if (element.getType() == ElementType.ROBOT) {
 				robotController.addRobot(element.getCoordinate(), ((Robot) element).getOrientation());
-			}
-			else {
+			} else {
 				elementController.addElement(element.getType(), element.getCoordinate());
 			}
 		}
 	}
 
-	
 	/**
 	 * Paint the gameWorld on the given graphics object.
 	 * 
 	 * @param graphics the graphics object on which the gameWorld should be painted.
+	 * @throws NullPointerException when the given graphics object is null.
 	 */
 	public void paint(Graphics graphics) {
+		if (graphics == null) {
+			throw new NullPointerException("The given Graphics can't be null");
+
+		}
 		robotCanvas.paint(graphics);
 	}
 
-	
 	/**
 	 * Retrieve the type corresponding to the RobotGameWorld.
 	 * 
 	 * @return the type corresponding to the RobotGameWorld
 	 */
 	public GameWorldType getType() {
-		return new RobotGameWorldType();
+		return factory.createType();
 	}
 
 }

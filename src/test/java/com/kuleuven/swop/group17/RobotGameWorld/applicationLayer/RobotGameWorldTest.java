@@ -10,9 +10,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import java.awt.Graphics;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,9 +36,11 @@ import com.kuleuven.swop.group17.GameWorldApi.Action;
 import com.kuleuven.swop.group17.GameWorldApi.Predicate;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
+import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Wall;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
 import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
+import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
@@ -69,7 +72,12 @@ public class RobotGameWorldTest {
 	@Mock
 	private RobotGameWorldSnapshot snapshot;
 	@Mock
-	private RobotGameWorldSnapshotFactory snapshotFactory;
+	private DependencyFactory factory;
+	
+	@Mock 
+	private Graphics mockGraphics;
+	@Captor
+	private ArgumentCaptor<Graphics> graphics;
 
 	@Captor
 	private ArgumentCaptor<Set<Element>> elements;
@@ -104,7 +112,10 @@ public class RobotGameWorldTest {
 
 		RobotGameWorld newWorld = new RobotGameWorld();
 		try {
-			Field f = RobotGameWorld.class.getDeclaredField("robotController");
+			Field f = DependencyFactory.class.getDeclaredField("snapshotFactory");
+			f.setAccessible(true);
+			assertTrue("RobotGameWorldSnapshotFactory was not initialised", f.get(newWorld) != null);
+			f = RobotGameWorld.class.getDeclaredField("robotController");
 			f.setAccessible(true);
 			assertTrue("RobotController was not initialised", f.get(newWorld) != null);
 			f = RobotGameWorld.class.getDeclaredField("elementController");
@@ -180,7 +191,7 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testPerformActionNullAction() {
-		String excMessage = "The given action is not a supported action for a RobotGameWorld.";
+		String excMessage = "The given action can't be null";
 		exceptionRule.expect(UnsupportedOperationException.class);
 		exceptionRule.expectMessage(excMessage);
 		world.performAction(null);
@@ -218,8 +229,8 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testEvaluateNullPredicate() {
-		String excMessage = "The given predicate is not a supported predicate for a RobotGameWorld.";
-		exceptionRule.expect(UnsupportedOperationException.class);
+		String excMessage = "The given predicate can't be null";
+		exceptionRule.expect(NullPointerException.class);
 		exceptionRule.expectMessage(excMessage);
 
 		world.evaluate(null);
@@ -236,7 +247,7 @@ public class RobotGameWorldTest {
 		state.add(new Robot(new Coordinate(0, 0)));
 		when(elementController.getElements()).thenReturn(state);
 
-		when(snapshotFactory.createSnapshot(elements.capture())).thenAnswer(new Answer<RobotGameWorldSnapshot>() {
+		when(factory.createSnapshot(elements.capture())).thenAnswer(new Answer<RobotGameWorldSnapshot>() {
 			@SuppressWarnings("unchecked")
 			public RobotGameWorldSnapshot answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -248,6 +259,7 @@ public class RobotGameWorldTest {
 		RobotGameWorldSnapshot snap = (RobotGameWorldSnapshot) world.saveState();
 
 		verify(elementController).getElements();
+		verify(factory).createSnapshot(any());
 		assertEquals(elements.getValue(),state);
 		assertEquals(state, snap.getElements());
 
@@ -259,8 +271,24 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testRestoreState() {
-		fail("Not yet implemented");
+		Set<Element> state = new HashSet<Element>();
+		state.add(new Robot(new Coordinate(0, 0)));
+		state.add(new Wall(new Coordinate(2, 2)));
+		state.add(new Wall(new Coordinate(2, 3)));
+		state.add(new Wall(new Coordinate(3, 2)));
+		state.add(new Wall(new Coordinate(2, 1)));
+		state.add(new Wall(new Coordinate(1, 2)));
+		
+		when(snapshot.getElements()).thenReturn(state);
+
+		
+		world.restoreState(snapshot);
+
+		verify(robotController, times(1)).addRobot(any(Coordinate.class), any(Orientation.class));
+		verify(elementController, times(5)).addElement(any(ElementType.class), any(Coordinate.class));
+		
 	}
+
 
 	/**
 	 * Test method for
@@ -268,9 +296,27 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testPaint() {
-		fail("Not yet implemented");
-	}
 
+		world.paint(mockGraphics);
+
+		verify(robotCanvas).paint(graphics.capture());
+		assertEquals(mockGraphics, graphics.getValue());
+	}
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#paint(java.awt.Graphics)}.
+	 */
+	@Test
+	public void testPaintNullGraphics() {
+		String excMessage = "The given Graphics can't be null";
+		exceptionRule.expect(NullPointerException.class);
+		exceptionRule.expectMessage(excMessage);
+
+		world.paint(null);
+
+		
+		verifyNoInteractions(robotCanvas);
+	}
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#getType()}.

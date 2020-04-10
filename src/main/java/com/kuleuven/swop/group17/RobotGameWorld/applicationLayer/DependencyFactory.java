@@ -7,19 +7,20 @@ import java.util.Set;
 
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
+import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 
 /**
- * RobotGameWorldSnapeshotFactory
+ * DependencyFactory
  *
  * @version 0.1
  * @author group17
  */
-class RobotGameWorldSnapshotFactory {
+class DependencyFactory {
 
 	/**
-	 * Create a RobotGameWorldSnapeshotFactory
+	 * Create a DependencyFactory
 	 */
-	RobotGameWorldSnapshotFactory() {
+	DependencyFactory() {
 		super();
 	}
 
@@ -30,6 +31,14 @@ class RobotGameWorldSnapshotFactory {
 	 */
 	RobotGameWorldSnapshot createSnapshot(Set<Element> elements){
 		return new RobotGameWorldSnapshot(elements);
+	}
+	
+	/**
+	 * Create a RobotGameWorldType.
+	 * @return a RobotGameWorldType
+	 */
+	RobotGameWorldType createType() {
+		return new RobotGameWorldType();
 	}
 	
 }
