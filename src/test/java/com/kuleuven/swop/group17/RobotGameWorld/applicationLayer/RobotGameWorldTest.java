@@ -33,6 +33,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import com.kuleuven.swop.group17.GameWorldApi.Action;
+import com.kuleuven.swop.group17.GameWorldApi.GameWorldSnapshot;
+import com.kuleuven.swop.group17.GameWorldApi.GameWorldType;
 import com.kuleuven.swop.group17.GameWorldApi.Predicate;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
@@ -45,6 +47,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
+import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.SupportedActions;
 import com.kuleuven.swop.group17.RobotGameWorld.types.SupportedPredicates;
 
@@ -76,6 +79,10 @@ public class RobotGameWorldTest {
 	
 	@Mock 
 	private Graphics mockGraphics;
+	
+	@Mock
+	private RobotGameWorldType type;
+	
 	@Captor
 	private ArgumentCaptor<Graphics> graphics;
 
@@ -112,7 +119,7 @@ public class RobotGameWorldTest {
 
 		RobotGameWorld newWorld = new RobotGameWorld();
 		try {
-			Field f = DependencyFactory.class.getDeclaredField("snapshotFactory");
+			Field f = RobotGameWorld.class.getDeclaredField("factory");
 			f.setAccessible(true);
 			assertTrue("RobotGameWorldSnapshotFactory was not initialised", f.get(newWorld) != null);
 			f = RobotGameWorld.class.getDeclaredField("robotController");
@@ -192,7 +199,7 @@ public class RobotGameWorldTest {
 	@Test
 	public void testPerformActionNullAction() {
 		String excMessage = "The given action can't be null";
-		exceptionRule.expect(UnsupportedOperationException.class);
+		exceptionRule.expect(NullPointerException.class);
 		exceptionRule.expectMessage(excMessage);
 		world.performAction(null);
 		verifyNoInteractions(robotController);
@@ -271,8 +278,18 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testRestoreState() {
+		// the mocks robotController and elementController are reset.
+		// this means that all previously called invocations and
+		// all previously made stubs on these mocks are forgotten.
+		// In this case it's used so the count of the number of times a method was called 
+		// only keeps in account the statements here.
+		reset(robotController);
+		reset(elementController);
+		
 		Set<Element> state = new HashSet<Element>();
-		state.add(new Robot(new Coordinate(0, 0)));
+		Robot r = new Robot(new Coordinate(0, 0));
+		r.setOrientation(Orientation.DOWN);
+		state.add(r);
 		state.add(new Wall(new Coordinate(2, 2)));
 		state.add(new Wall(new Coordinate(2, 3)));
 		state.add(new Wall(new Coordinate(3, 2)));
@@ -281,9 +298,12 @@ public class RobotGameWorldTest {
 		
 		when(snapshot.getElements()).thenReturn(state);
 
+	
 		
 		world.restoreState(snapshot);
 
+		
+		
 		verify(robotController, times(1)).addRobot(any(Coordinate.class), any(Orientation.class));
 		verify(elementController, times(5)).addElement(any(ElementType.class), any(Coordinate.class));
 		
@@ -292,16 +312,76 @@ public class RobotGameWorldTest {
 
 	/**
 	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#restoreState(com.kuleuven.swop.group17.GameWorldApi.GameWorldSnapshot)}.
+	 */
+	@Test
+	public void testRestoreStateNullState() {
+		// the mocks robotController and elementController are reset.
+		// this means that all previously called invocations and
+		// all previously made stubs on these mocks are forgotten.
+		// In this case it's used so the count of the number of times a method was called 
+		// only keeps in account the statements here.
+		reset(robotController);
+		reset(elementController);	
+
+		String excMessage = "The given GameWorldSnapshot can't be null";
+		exceptionRule.expect(NullPointerException.class);
+		exceptionRule.expectMessage(excMessage);
+			
+		world.restoreState(null);
+
+		
+		
+		verifyNoInteractions(robotController);
+		verifyNoInteractions(elementController);
+		
+	}
+	
+	
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#restoreState(com.kuleuven.swop.group17.GameWorldApi.GameWorldSnapshot)}.
+	 */
+	@Test
+	public void testRestoreStateInvalidState() {
+		// the mocks robotController and elementController are reset.
+		// this means that all previously called invocations and
+		// all previously made stubs on these mocks are forgotten.
+		// In this case it's used so the count of the number of times a method was called 
+		// only keeps in account the statements here.
+		reset(robotController);
+		reset(elementController);	
+
+		String excMessage = "The given GameWorldSnapshot is not a valid snapshot for a RobotGameWorld.";
+		exceptionRule.expect(IllegalArgumentException.class);
+		exceptionRule.expectMessage(excMessage);
+			
+		GameWorldSnapshot state = new GameWorldSnapshot() {
+		};
+		
+		world.restoreState(state);
+
+		
+		
+		verifyNoInteractions(robotController);
+		verifyNoInteractions(elementController);
+		
+	}
+	
+	
+	
+	/**
+	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#paint(java.awt.Graphics)}.
 	 */
 	@Test
 	public void testPaint() {
-
 		world.paint(mockGraphics);
 
 		verify(robotCanvas).paint(graphics.capture());
 		assertEquals(mockGraphics, graphics.getValue());
 	}
+	
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#paint(java.awt.Graphics)}.
@@ -313,7 +393,6 @@ public class RobotGameWorldTest {
 		exceptionRule.expectMessage(excMessage);
 
 		world.paint(null);
-
 		
 		verifyNoInteractions(robotCanvas);
 	}
@@ -323,7 +402,13 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testGetType() {
-		fail("Not yet implemented");
+		when(factory.createType()).thenReturn(type);
+		
+		GameWorldType testType = world.getType();
+		
+		
+		verify(factory).createType();
+		assertEquals(type, testType);
 	}
 
 }

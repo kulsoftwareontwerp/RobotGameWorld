@@ -17,7 +17,6 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
-import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 
 /**
  * A GameWorld is described by a GameWorldType. GameWorlds are able to perform
@@ -131,13 +130,15 @@ public class RobotGameWorld implements GameWorld {
 		}
 		RobotGameWorldPredicate robotPredicate = (RobotGameWorldPredicate) predicate;
 
+		boolean evaluation=false;
+		
 		switch (robotPredicate.getPredicate()) {
 		case WALLINFRONT:
-			return robotController.checkIfWallInFront();
-		default:
-			return false;
-
+			evaluation=  robotController.checkIfWallInFront();
+			break;
 		}
+		
+		return evaluation;
 
 	}
 
