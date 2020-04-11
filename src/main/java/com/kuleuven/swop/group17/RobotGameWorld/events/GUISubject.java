@@ -10,15 +10,18 @@ public interface GUISubject {
 
 	/**
 	 * Add a GUIListener
-	 * @param 	listener
-	 * 			The listener to be added.
+	 * 
+	 * @param listener The listener to be added.
+	 * @throws NullPointerException When the given GUIListener is null.
+	 * 
 	 */
 	void addListener(GUIListener listener);
 
 	/**
 	 * Remove a GUIListener
-	 * @param 	listener
-	 * 			The listener to be removed.
+	 * 
+	 * @param listener The listener to be removed.
+	 * @throws NullPointerException When the given GUIListener is null.
 	 */
 	void removeListener(GUIListener listener);
 
