@@ -148,7 +148,7 @@ public class Cell {
 	 * 
 	 * @return the image associated with this Cell
 	 */
-	public BufferedImage getImage() throws IOException {
+	public BufferedImage getImage() {
 		return image;
 	}
 

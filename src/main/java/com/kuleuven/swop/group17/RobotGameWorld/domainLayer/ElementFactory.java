@@ -20,6 +20,7 @@ public class ElementFactory {
 	 * @param coordinate	The coordinate to set this element to.
 	 * @throws 	IllegalArgumentException
 	 * 			thrown when type is null or sand.
+	 * @return an element with the givent type and coordinate.
 	 */
 	public Element createElement(ElementType type, Coordinate coordinate) {
 		Element element;

@@ -5,7 +5,7 @@
 
 	<groupId>com.kuleuven.swop.group17</groupId>
 	<artifactId>RobotGameWorld</artifactId>
-	<version>0.4</version>
+	<version>0.5</version>
 	<packaging>jar</packaging>
 
 	<name>RobotGameWorld</name>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.kuleuven.swop.group17</groupId>
 			<artifactId>GameWorldApi</artifactId>
-			<version>0.5</version>
+			<version>(,1.0]</version>
 		</dependency>
 	</dependencies>
 
