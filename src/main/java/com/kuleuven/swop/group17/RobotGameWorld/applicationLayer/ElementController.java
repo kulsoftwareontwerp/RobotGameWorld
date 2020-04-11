@@ -89,7 +89,6 @@ public class ElementController implements GUISubject {
 	 *        will be thrown to all the listeners.
 	 * @throws NullPointerException When the given ElementType or the given
 	 *                              Coordinate is null.
-	 * @throws NullPointerException When the given ElementRepository is null.
 	 * 
 	 */
 	void addElement(ElementType element, Coordinate coordinate) {

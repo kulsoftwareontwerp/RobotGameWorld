@@ -13,12 +13,16 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
 
 import java.awt.Graphics;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.rmi.UnexpectedException;
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -36,10 +40,13 @@ import com.kuleuven.swop.group17.GameWorldApi.Action;
 import com.kuleuven.swop.group17.GameWorldApi.GameWorldSnapshot;
 import com.kuleuven.swop.group17.GameWorldApi.GameWorldType;
 import com.kuleuven.swop.group17.GameWorldApi.Predicate;
+import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.DomainFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
+import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.ElementFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Wall;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
+import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.GuiFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
@@ -50,6 +57,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.SupportedActions;
 import com.kuleuven.swop.group17.RobotGameWorld.types.SupportedPredicates;
+import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
 
 /**
  * RobotGameWorldTest
@@ -57,7 +65,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.SupportedPredicates;
  * @version 0.1
  * @author group17
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class RobotGameWorldTest {
 
 	@Rule
@@ -71,33 +79,92 @@ public class RobotGameWorldTest {
 
 	@Mock
 	private RobotCanvas robotCanvas;
+	
+	@Mock
+	private TypeFactory typeFactory;
+	
+	@Mock
+	private GuiFactory guiFactory;
 
+
+	
 	@Mock
 	private RobotGameWorldSnapshot snapshot;
-	@Mock
-	private DependencyFactory factory;
 	
 	@Mock 
 	private Graphics mockGraphics;
 	
 	@Mock
 	private RobotGameWorldType type;
+	@Mock
+	private RobotGameWorldAction action;
+	
+	@Mock
+	private RobotGameWorldPredicate predicate;
+	
+	
 	
 	@Captor
 	private ArgumentCaptor<Graphics> graphics;
 
+	@Captor
+	private ArgumentCaptor<SupportedActions> supportedAction;	
+	@Captor
+	private ArgumentCaptor<SupportedPredicates> supportedPredicate;	
+	
 	@Captor
 	private ArgumentCaptor<Set<Element>> elements;
 
 	@InjectMocks
 	private RobotGameWorld world;
 
+
+	
+	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		//Stub TypeFactory
+		when(typeFactory.createAction(supportedAction.capture())).then(new Answer<RobotGameWorldAction>() {
+			@Override
+			public RobotGameWorldAction answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				when(action.getAction()).thenReturn((SupportedActions) args[0]);
+				return action;
+			}
+			
+		});
+		when(typeFactory.createPredicate(supportedPredicate.capture())).then(new Answer<RobotGameWorldPredicate>() {
+			@Override
+			public RobotGameWorldPredicate answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				when(predicate.getPredicate()).thenReturn((SupportedPredicates) args[0]);
+				return predicate;
+			}
+			
+		});
+		when(typeFactory.createCoordinate(any(int.class), any(int.class))).then(new Answer<Coordinate>() {
 
+			@Override
+			public Coordinate answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				Coordinate c = mock(Coordinate.class);
+				when(c.getX()).thenReturn((int)args[0]);
+				when(c.getY()).thenReturn((int)args[1]);
+				
+				return c;
+			}
+			
+		});
+
+
+		when(typeFactory.createType()).thenReturn(type);
+		
+		
+		
+		
 	}
 
 	/**
@@ -119,7 +186,7 @@ public class RobotGameWorldTest {
 
 		RobotGameWorld newWorld = new RobotGameWorld();
 		try {
-			Field f = RobotGameWorld.class.getDeclaredField("factory");
+			Field f = RobotGameWorld.class.getDeclaredField("typeFactory");
 			f.setAccessible(true);
 			assertTrue("RobotGameWorldSnapshotFactory was not initialised", f.get(newWorld) != null);
 			f = RobotGameWorld.class.getDeclaredField("robotController");
@@ -160,7 +227,7 @@ public class RobotGameWorldTest {
 		// At last The RobotGameWorld itself is also initialized by adding elements and
 		// a robot. A robotGameWorld should at least add a robot, otherwise it won't be
 		// able to do any meaningful actions.
-		verify(robotController).addRobot(any(Coordinate.class), any(Orientation.class));
+		verify(robotController).addRobot(any(), any(Orientation.class));
 	}
 
 	/**
@@ -169,11 +236,11 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testPerformAction() {
-		world.performAction(new RobotGameWorldAction(SupportedActions.MOVEFORWARD));
+		world.performAction(typeFactory.createAction(SupportedActions.MOVEFORWARD));
 		verify(robotController).moveForward();
-		world.performAction(new RobotGameWorldAction(SupportedActions.TURNLEFT));
+		world.performAction(typeFactory.createAction(SupportedActions.TURNLEFT));
 		verify(robotController).turnLeft();
-		world.performAction(new RobotGameWorldAction(SupportedActions.TURNRIGHT));
+		world.performAction(typeFactory.createAction(SupportedActions.TURNRIGHT));
 		verify(robotController).turnRight();
 	}
 
@@ -196,6 +263,19 @@ public class RobotGameWorldTest {
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#performAction(com.kuleuven.swop.group17.GameWorldApi.Action)}.
 	 */
+	@Test(expected = RuntimeException.class)
+	public void testPerformActionUnexpectedException() {
+		doThrow(new NoSuchElementException("I did not see this comming.")).when(robotController).moveForward();
+
+		world.performAction(typeFactory.createAction(SupportedActions.MOVEFORWARD));
+		Mockito.verifyNoInteractions(robotController);
+	}
+	
+	
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#performAction(com.kuleuven.swop.group17.GameWorldApi.Action)}.
+	 */
 	@Test
 	public void testPerformActionNullAction() {
 		String excMessage = "The given action can't be null";
@@ -211,10 +291,11 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testEvaluate() {
-		world.evaluate(new RobotGameWorldPredicate(SupportedPredicates.WALLINFRONT));
+		world.evaluate(typeFactory.createPredicate(SupportedPredicates.WALLINFRONT));
 		verify(robotController).checkIfWallInFront();
 	}
-
+	
+	
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#evaluate(com.kuleuven.swop.group17.GameWorldApi.Predicate)}.
@@ -230,6 +311,18 @@ public class RobotGameWorldTest {
 		verifyNoInteractions(robotController);
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#evaluate(com.kuleuven.swop.group17.GameWorldApi.Predicate)}.
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testEvaluateUnexpectedException() {
+		doThrow(new NoSuchElementException("I did not see this comming.")).when(robotController).checkIfWallInFront();
+
+		world.evaluate(typeFactory.createPredicate(SupportedPredicates.WALLINFRONT));
+		Mockito.verifyNoInteractions(robotController);
+	}
+	
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#evaluate(com.kuleuven.swop.group17.GameWorldApi.Predicate)}.
@@ -250,11 +343,20 @@ public class RobotGameWorldTest {
 	 */
 	@Test
 	public void testSaveState() {
-		HashSet<Element> state = new HashSet<Element>();
-		state.add(new Robot(new Coordinate(0, 0)));
+		Set<Element> state = constructTestState();
+
+		when(typeFactory.createSnapshot(elements.capture())).thenAnswer(new Answer<RobotGameWorldSnapshot>() {
+			@SuppressWarnings("unchecked")
+			public RobotGameWorldSnapshot answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				when(snapshot.getElements()).thenReturn((Set<Element>) args[0]);
+				return snapshot;
+			}
+		});
+		
 		when(elementController.getElements()).thenReturn(state);
 
-		when(factory.createSnapshot(elements.capture())).thenAnswer(new Answer<RobotGameWorldSnapshot>() {
+		when(typeFactory.createSnapshot(elements.capture())).thenAnswer(new Answer<RobotGameWorldSnapshot>() {
 			@SuppressWarnings("unchecked")
 			public RobotGameWorldSnapshot answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -266,10 +368,26 @@ public class RobotGameWorldTest {
 		RobotGameWorldSnapshot snap = (RobotGameWorldSnapshot) world.saveState();
 
 		verify(elementController).getElements();
-		verify(factory).createSnapshot(any());
+		verify(typeFactory).createSnapshot(any());
 		assertEquals(elements.getValue(),state);
 		assertEquals(state, snap.getElements());
 
+	}
+	
+	private Set<Element> constructTestState(){
+		DomainFactory f = new DomainFactory();
+		ElementFactory ef = f.createElementFactory();
+		
+		Set<Element> state = new HashSet<Element>();
+		Robot r =(Robot) ef.createElement(ElementType.ROBOT, typeFactory.createCoordinate(0, 0));
+		r.setOrientation(Orientation.DOWN);
+		state.add(r);
+		state.add(ef.createElement(ElementType.GOAL,typeFactory.createCoordinate(2, 2)));
+		state.add(ef.createElement(ElementType.WALL,typeFactory.createCoordinate(2, 3)));
+		state.add(ef.createElement(ElementType.WALL,typeFactory.createCoordinate(3, 2)));
+		state.add(ef.createElement(ElementType.WALL,typeFactory.createCoordinate(2, 1)));
+		state.add(ef.createElement(ElementType.WALL,typeFactory.createCoordinate(1, 2)));
+		return state;
 	}
 
 	/**
@@ -286,19 +404,9 @@ public class RobotGameWorldTest {
 		reset(robotController);
 		reset(elementController);
 		
-		Set<Element> state = new HashSet<Element>();
-		Robot r = new Robot(new Coordinate(0, 0));
-		r.setOrientation(Orientation.DOWN);
-		state.add(r);
-		state.add(new Wall(new Coordinate(2, 2)));
-		state.add(new Wall(new Coordinate(2, 3)));
-		state.add(new Wall(new Coordinate(3, 2)));
-		state.add(new Wall(new Coordinate(2, 1)));
-		state.add(new Wall(new Coordinate(1, 2)));
+		Set<Element> state = constructTestState();
 		
 		when(snapshot.getElements()).thenReturn(state);
-
-	
 		
 		world.restoreState(snapshot);
 
@@ -396,18 +504,34 @@ public class RobotGameWorldTest {
 		
 		verifyNoInteractions(robotCanvas);
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#paint(java.awt.Graphics)}.
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testPaintUnexpectedException() {
+		doThrow(new NoSuchElementException("I did not see this comming.")).when(robotCanvas).paint(any(Graphics.class));
+		world.paint(mockGraphics);
+		Mockito.verifyNoInteractions(robotCanvas);
+	}
+	
+	
+	
+	
+	
 	/**
 	 * Test method for
 	 * {@link com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld#getType()}.
 	 */
 	@Test
 	public void testGetType() {
-		when(factory.createType()).thenReturn(type);
+		
 		
 		GameWorldType testType = world.getType();
 		
 		
-		verify(factory).createType();
+		verify(typeFactory).createType();
 		assertEquals(type, testType);
 	}
 

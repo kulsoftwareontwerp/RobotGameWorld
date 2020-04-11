@@ -42,10 +42,11 @@ public class RobotGameWorld implements GameWorld {
 		super();
 		DomainFactory domainFactory = new DomainFactory();
 		ElementRepository elementRepository = domainFactory.createElementRepository();
-		
+
 		RobotController robotController = new RobotController(elementRepository);
 		ElementController elementController = new ElementController(elementRepository);
-		createRobotGameWorld(robotController, elementController, new TypeFactory(),  new GuiFactory());
+		createRobotGameWorld(robotController, elementController, new TypeFactory(),
+				(new GuiFactory()).createRobotCanvas());
 
 	}
 
@@ -53,20 +54,18 @@ public class RobotGameWorld implements GameWorld {
 	// initialize the fields with mocks.
 	@SuppressWarnings("unused")
 	private RobotGameWorld(RobotController robotController, ElementController elementController,
-			TypeFactory typeFactory,  GuiFactory guiFactory) {
+			TypeFactory typeFactory, RobotCanvas robotCanvas) {
 		super();
-		createRobotGameWorld(robotController, elementController, typeFactory, guiFactory);
+		createRobotGameWorld(robotController, elementController, typeFactory, robotCanvas);
 	}
 
 	private void createRobotGameWorld(RobotController robotController, ElementController elementController,
-			TypeFactory typeFactory, GuiFactory guiFactory) {
+			TypeFactory typeFactory, RobotCanvas robotCanvas) {
 
+		this.typeFactory = typeFactory;
 
-		this.typeFactory=typeFactory;
-		
-		
-		this.robotCanvas = guiFactory.createRobotCanvas();
-		
+		this.robotCanvas = robotCanvas;
+
 		this.elementController = elementController;
 		this.robotController = robotController;
 
@@ -93,8 +92,12 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       listed in the supportedActions of the
 	 *                                       corresponding gameWorldType of this
 	 *                                       gameWorld.
+	 * @throws NullPointerException          when the given action is null.
+	 * @throws RuntimeException              when something went wrong in the
+	 *                                       execution of the action.
 	 */
-	public void performAction(Action action) throws UnsupportedOperationException {
+	public void performAction(Action action)
+			throws UnsupportedOperationException, NullPointerException, RuntimeException {
 		if (action == null) {
 			throw new NullPointerException("The given action can't be null");
 
@@ -102,17 +105,21 @@ public class RobotGameWorld implements GameWorld {
 		if (!(action instanceof RobotGameWorldAction)) {
 			throw new UnsupportedOperationException("The given action is not a supported action for a RobotGameWorld.");
 		}
-		RobotGameWorldAction robotAction = (RobotGameWorldAction) action;
-		switch (robotAction.getAction()) {
-		case MOVEFORWARD:
-			robotController.moveForward();
-			break;
-		case TURNLEFT:
-			robotController.turnLeft();
-			break;
-		case TURNRIGHT:
-			robotController.turnRight();
-			break;
+		try {
+			RobotGameWorldAction robotAction = (RobotGameWorldAction) action;
+			switch (robotAction.getAction()) {
+			case MOVEFORWARD:
+				robotController.moveForward();
+				break;
+			case TURNLEFT:
+				robotController.turnLeft();
+				break;
+			case TURNRIGHT:
+				robotController.turnRight();
+				break;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
 	}
@@ -126,9 +133,12 @@ public class RobotGameWorld implements GameWorld {
 	 *                                       the corresponding gameWorldType of this
 	 *                                       gameWorld.
 	 * @throws NullPointerException          when the given predicate is null.
+	 * @throws RuntimeException              when something went wrong in the
+	 *                                       evaluation of the predicate.
 	 * @return the evaluation of the given predicate.
 	 */
-	public Boolean evaluate(Predicate predicate) throws UnsupportedOperationException {
+	public Boolean evaluate(Predicate predicate)
+			throws UnsupportedOperationException, NullPointerException, RuntimeException {
 		if (predicate == null) {
 			throw new NullPointerException("The given predicate can't be null");
 		}
@@ -137,17 +147,21 @@ public class RobotGameWorld implements GameWorld {
 			throw new UnsupportedOperationException(
 					"The given predicate is not a supported predicate for a RobotGameWorld.");
 		}
-		RobotGameWorldPredicate robotPredicate = (RobotGameWorldPredicate) predicate;
+		try {
+			RobotGameWorldPredicate robotPredicate = (RobotGameWorldPredicate) predicate;
 
-		boolean evaluation=false;
-		
-		switch (robotPredicate.getPredicate()) {
-		case WALLINFRONT:
-			evaluation=  robotController.checkIfWallInFront();
-			break;
+			boolean evaluation = false;
+
+			switch (robotPredicate.getPredicate()) {
+			case WALLINFRONT:
+				evaluation = robotController.checkIfWallInFront();
+				break;
+			}
+
+			return evaluation;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		
-		return evaluation;
 
 	}
 
@@ -191,13 +205,17 @@ public class RobotGameWorld implements GameWorld {
 	 * 
 	 * @param graphics the graphics object on which the gameWorld should be painted.
 	 * @throws NullPointerException when the given graphics object is null.
+	 * @throws RuntimeException     when something went wrong during painting
 	 */
-	public void paint(Graphics graphics) {
+	public void paint(Graphics graphics) throws NullPointerException, RuntimeException {
 		if (graphics == null) {
 			throw new NullPointerException("The given Graphics can't be null");
-
 		}
-		robotCanvas.paint(graphics);
+		try {
+			robotCanvas.paint(graphics);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

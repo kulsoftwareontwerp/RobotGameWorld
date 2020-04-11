@@ -6,7 +6,6 @@ package com.kuleuven.swop.group17.RobotGameWorld.types;
 import java.util.Set;
 
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
-import com.kuleuven.swop.group17.RobotGameWorld.events.RobotAddedEvent;
 
 /**
  * TypeFactory

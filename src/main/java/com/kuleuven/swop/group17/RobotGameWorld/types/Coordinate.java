@@ -7,7 +7,7 @@ package com.kuleuven.swop.group17.RobotGameWorld.types;
  * @version 0.1
  * @author group17
  */
-public final class Coordinate {
+public class Coordinate {
 	private final int x;
 	private final int y;
 

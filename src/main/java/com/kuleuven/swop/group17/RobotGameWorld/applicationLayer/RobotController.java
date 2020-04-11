@@ -33,11 +33,26 @@ public class RobotController implements GUISubject {
 	private ElementRepository elementRepository;
 	private EventFactory eventFactory;
 
-	public RobotController(ElementRepository elementRepository) {
-		super();
+	RobotController(ElementRepository elementRepository) {
+		if (elementRepository == null) {
+			throw new NullPointerException("The given elementRepository can't be null.");
+		}
+
+		createRobotController(new EventFactory(), elementRepository, new HashSet<GUIListener>());
+
+	}
+
+	@SuppressWarnings("unused")
+	private RobotController(ElementRepository elementRepository, Collection<GUIListener> guiListeners,
+			EventFactory eventFactory) {
+		createRobotController(eventFactory, elementRepository, guiListeners);
+	}
+
+	private void createRobotController(EventFactory eventFactory, ElementRepository elementRepository,
+			Collection<GUIListener> guiListeners) {
+		this.eventFactory = eventFactory;
 		this.elementRepository = elementRepository;
-		this.guiListeners=new HashSet<GUIListener>();
-		eventFactory = new EventFactory();
+		this.guiListeners = guiListeners;
 	}
 
 	private void fireRobotAddedEvent(Coordinate coordinate, Orientation orientation) {
@@ -125,8 +140,17 @@ public class RobotController implements GUISubject {
 	 * @param orientation The orientation for the Robot.
 	 * @event RobotAddedEvent When the operation is successful and elementType is
 	 *        robot the RobotAddedEvent will be thrown to all the listeners.
+	 * @throws NullPointerException When the given Orientation or the given
+	 *                              Coordinate is null.
+	 * 
 	 */
-	void addRobot(Coordinate coordinate, Orientation orientation) {
+	void addRobot(Coordinate coordinate, Orientation orientation){
+		if (orientation == null) {
+			throw new NullPointerException("The given Orientation can't be null.");
+		}
+		if (coordinate == null) {
+			throw new NullPointerException("The given Coordinate can't be null.");
+		}
 		elementRepository.addElement(ElementType.ROBOT, coordinate);
 		getRobot().setOrientation(orientation);
 		fireRobotAddedEvent(coordinate, orientation);
@@ -151,7 +175,7 @@ public class RobotController implements GUISubject {
 		return false;
 	}
 
-	private Robot getRobot() {
+	private Robot getRobot() throws NoSuchElementException {
 
 		Optional<Robot> robot = elementRepository.getElementByType(ElementType.ROBOT).stream().map(s -> (Robot) s)
 				.findFirst();
@@ -171,16 +195,16 @@ public class RobotController implements GUISubject {
 
 		switch (currentRobotOrientation) {
 		case UP:
-			toReturn= rc.setY(rc.getY() - 1);
+			toReturn = rc.setY(rc.getY() - 1);
 			break;
 		case DOWN:
-			toReturn= rc.setY(rc.getY() + 1);
+			toReturn = rc.setY(rc.getY() + 1);
 			break;
 		case LEFT:
-			toReturn= rc.setX(rc.getX() - 1);
+			toReturn = rc.setX(rc.getX() - 1);
 			break;
 		case RIGHT:
-			toReturn= rc.setX(rc.getX() + 1);
+			toReturn = rc.setX(rc.getX() + 1);
 			break;
 		}
 		return toReturn;
@@ -188,12 +212,18 @@ public class RobotController implements GUISubject {
 
 	@Override
 	public void removeListener(GUIListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("The given GUIListener can't be null.");
+		}
 		guiListeners.remove(listener);
 
 	}
 
 	@Override
 	public void addListener(GUIListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("The given GUIListener can't be null.");
+		}
 		guiListeners.add(listener);
 	}
 
