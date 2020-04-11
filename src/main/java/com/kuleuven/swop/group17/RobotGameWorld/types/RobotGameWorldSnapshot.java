@@ -23,7 +23,7 @@ public class RobotGameWorldSnapshot implements GameWorldSnapshot {
 	 * Create a snapshot of the robotGameWorld.
 	 * @param elements All the elements from the robotGameWorld that define the current state.
 	 */
-	public RobotGameWorldSnapshot(Set<Element> elements) {
+	RobotGameWorldSnapshot(Set<Element> elements) {
 		super();
 		setElements(elements);
 	}

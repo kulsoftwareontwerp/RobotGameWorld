@@ -17,7 +17,7 @@ public class Wall extends Element implements SolidElement {
 	 * Create a wall
 	 * @param coordinate The coordinate of this wall.
 	 */
-	public Wall(Coordinate coordinate) {
+	Wall(Coordinate coordinate) {
 		super(coordinate);
 	}
 

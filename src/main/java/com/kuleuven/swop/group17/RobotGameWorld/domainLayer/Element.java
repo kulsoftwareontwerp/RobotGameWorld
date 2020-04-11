@@ -19,7 +19,7 @@ public abstract class Element {
 	 * 
 	 * @param coordinate the coordinate for this element.
 	 */
-	public Element(Coordinate coordinate) {
+	Element(Coordinate coordinate) {
 		setCoordinate(coordinate);
 	}
 
@@ -29,8 +29,7 @@ public abstract class Element {
 	 * @return the coordinate for this element.
 	 */
 	public Coordinate getCoordinate() {
-		Coordinate copy = new Coordinate(coordinate.getX(),coordinate.getY());
-		return copy;
+		return coordinate;
 	}
 
 	/**
@@ -39,8 +38,7 @@ public abstract class Element {
 	 * @param coordinate The coordinate to set this element to.
 	 */
 	public void setCoordinate(Coordinate coordinate) {
-		Coordinate copy = new Coordinate(coordinate.getX(),coordinate.getY());
-		this.coordinate = copy;
+		this.coordinate = coordinate;
 	}
 
 	/**

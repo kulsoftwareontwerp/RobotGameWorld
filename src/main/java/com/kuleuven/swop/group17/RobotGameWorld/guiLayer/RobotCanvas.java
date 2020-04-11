@@ -9,25 +9,28 @@ import com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
 import com.kuleuven.swop.group17.RobotGameWorld.events.RobotAddedEvent;
-import com.kuleuven.swop.group17.RobotGameWorld.events.RobotChangeEvent;
+import com.kuleuven.swop.group17.RobotGameWorld.events.RobotChangedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
+import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
 
 public class RobotCanvas implements GUIListener {
 	private HashMap<Coordinate, Cell> cells;
 	private CellFactory factory;
 	private final int OFFSET_GAMEAREA_CELLS = 4;
 	private static final int CELL_SIZE = 50;
+	private TypeFactory typeFactory;
 
-	public RobotCanvas() {
+	RobotCanvas() {
 		cells = new HashMap<Coordinate, Cell>();
 		factory = new CellFactory();
+		typeFactory = new TypeFactory();
 		initCells();
 	}
 
 	private void addCell(Cell cell) {
-		cell.setCoordinateOffset(new Coordinate(0, OFFSET_GAMEAREA_CELLS));
+		cell.setCoordinateOffset(typeFactory.createCoordinate(0, OFFSET_GAMEAREA_CELLS));
 
 		cells.put(cell.getCoordinate(), cell);
 	}
@@ -50,7 +53,7 @@ public class RobotCanvas implements GUIListener {
 		// Upper Fill Cells
 		for (int x = 0; x <= 4; x++) {
 			for (int y = 0; y <= 3; y++) {
-				Coordinate coordinate = new Coordinate(x, y);
+				Coordinate coordinate = typeFactory.createCoordinate(x, y);
 				cells.put(coordinate, factory.createCell(ElementType.WALL, coordinate));
 			}
 		}
@@ -58,7 +61,7 @@ public class RobotCanvas implements GUIListener {
 		// Intermediate Fill Cells (REAL CELLS)
 		for (int x = 0; x <= 4; x++) {
 			for (int y = 4; y <= 7; y++) {
-				Coordinate coordinate = new Coordinate(x, y);
+				Coordinate coordinate = typeFactory.createCoordinate(x, y);
 				cells.put(coordinate, factory.createCell(ElementType.SAND, coordinate));
 			}
 		}
@@ -66,7 +69,7 @@ public class RobotCanvas implements GUIListener {
 		// Lower Fill Cells
 		for (int x = 0; x <= 4; x++) {
 			for (int y = 8; y <= 11; y++) {
-				Coordinate coordinate = new Coordinate(x, y);
+				Coordinate coordinate = typeFactory.createCoordinate(x, y);
 				cells.put(coordinate, factory.createCell(ElementType.WALL, coordinate));
 			}
 		}
@@ -105,7 +108,7 @@ public class RobotCanvas implements GUIListener {
 	}
 
 	@Override
-	public void onRobotChangeEvent(RobotChangeEvent event) {
+	public void onRobotChangeEvent(RobotChangedEvent event) {
 		moveRobot(event.getCoordinate(), event.getOrientation());
 	}
 

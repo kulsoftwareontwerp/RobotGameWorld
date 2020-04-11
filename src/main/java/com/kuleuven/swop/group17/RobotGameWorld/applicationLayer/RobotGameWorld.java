@@ -7,9 +7,11 @@ import com.kuleuven.swop.group17.GameWorldApi.GameWorld;
 import com.kuleuven.swop.group17.GameWorldApi.GameWorldSnapshot;
 import com.kuleuven.swop.group17.GameWorldApi.GameWorldType;
 import com.kuleuven.swop.group17.GameWorldApi.Predicate;
+import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.DomainFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.ElementRepository;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
+import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.GuiFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
@@ -17,6 +19,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldPredicate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldSnapshot;
+import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
 
 /**
  * A GameWorld is described by a GameWorldType. GameWorlds are able to perform
@@ -30,18 +33,19 @@ public class RobotGameWorld implements GameWorld {
 	private RobotController robotController;
 	private ElementController elementController;
 	private RobotCanvas robotCanvas;
-	private DependencyFactory factory;
+	private TypeFactory typeFactory;
 
 	/**
 	 * Create a RobotGameWorld
 	 */
 	public RobotGameWorld() {
 		super();
-
-		ElementRepository elementRepository = new ElementRepository();
+		DomainFactory domainFactory = new DomainFactory();
+		ElementRepository elementRepository = domainFactory.createElementRepository();
+		
 		RobotController robotController = new RobotController(elementRepository);
 		ElementController elementController = new ElementController(elementRepository);
-		createRobotGameWorld(robotController, elementController, new DependencyFactory(), new RobotCanvas());
+		createRobotGameWorld(robotController, elementController, new TypeFactory(),  new GuiFactory());
 
 	}
 
@@ -49,15 +53,20 @@ public class RobotGameWorld implements GameWorld {
 	// initialize the fields with mocks.
 	@SuppressWarnings("unused")
 	private RobotGameWorld(RobotController robotController, ElementController elementController,
-			DependencyFactory factory, RobotCanvas robotCanvas) {
+			TypeFactory typeFactory,  GuiFactory guiFactory) {
 		super();
-		createRobotGameWorld(robotController, elementController, factory, robotCanvas);
+		createRobotGameWorld(robotController, elementController, typeFactory, guiFactory);
 	}
 
 	private void createRobotGameWorld(RobotController robotController, ElementController elementController,
-			DependencyFactory factory, RobotCanvas robotCanvas) {
-		this.robotCanvas = robotCanvas;
-		this.factory = factory;
+			TypeFactory typeFactory, GuiFactory guiFactory) {
+
+
+		this.typeFactory=typeFactory;
+		
+		
+		this.robotCanvas = guiFactory.createRobotCanvas();
+		
 		this.elementController = elementController;
 		this.robotController = robotController;
 
@@ -68,12 +77,12 @@ public class RobotGameWorld implements GameWorld {
 	}
 
 	private void initializeRobotGameWorld() {
-		robotController.addRobot(new Coordinate(2, 3), Orientation.UP);
-		elementController.addElement(ElementType.WALL, new Coordinate(0, 0));
-		elementController.addElement(ElementType.WALL, new Coordinate(4, 0));
-		elementController.addElement(ElementType.WALL, new Coordinate(1, 2));
-		elementController.addElement(ElementType.WALL, new Coordinate(2, 2));
-		elementController.addElement(ElementType.WALL, new Coordinate(3, 2));
+		robotController.addRobot(typeFactory.createCoordinate(2, 3), Orientation.UP);
+		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(0, 0));
+		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(4, 0));
+		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(1, 2));
+		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(2, 2));
+		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(3, 2));
 	}
 
 	/**
@@ -148,7 +157,7 @@ public class RobotGameWorld implements GameWorld {
 	 * @return a non inspectable snapshot with current state of the gameWorld
 	 */
 	public GameWorldSnapshot saveState() {
-		return factory.createSnapshot(elementController.getElements());
+		return typeFactory.createSnapshot(elementController.getElements());
 	}
 
 	/**
@@ -197,7 +206,7 @@ public class RobotGameWorld implements GameWorld {
 	 * @return the type corresponding to the RobotGameWorld
 	 */
 	public GameWorldType getType() {
-		return factory.createType();
+		return typeFactory.createType();
 	}
 
 }

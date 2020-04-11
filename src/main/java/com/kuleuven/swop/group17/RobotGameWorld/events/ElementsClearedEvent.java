@@ -10,7 +10,7 @@ public class ElementsClearedEvent implements EventObject {
 	/**
 	 * Create an clearElementsEvent
 	 */
-	public ElementsClearedEvent() {
+	ElementsClearedEvent() {
 		super();
 	}
 	

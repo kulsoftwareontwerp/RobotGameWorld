@@ -11,7 +11,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
  */
 public class ElementFactory {
 
-	public ElementFactory() {	
+	ElementFactory() {	
 	}
 
 	/**

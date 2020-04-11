@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
+import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
 
 /**
  * A Cell is the visual representation of an Element. No element corresponds to
@@ -19,11 +20,11 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  */
 public class Cell {
 
-
 	private ElementType type;
 	private String resourcePath;
 	private Coordinate coordinate;
 	private Orientation orientation;
+	private BufferedImage image;
 
 	/**
 	 * Create a cell with the given ElementType,Orientation and Coordinate
@@ -32,7 +33,7 @@ public class Cell {
 	 * @param coordinate  The coordinate of the cell.
 	 * @param orientation The orientation of the cell
 	 */
-	public Cell(Coordinate coordinate, Orientation orientation, ElementType type) {
+	public Cell(Coordinate coordinate, Orientation orientation, ElementType type)  {
 		setCoordinate(coordinate);
 		setType(type);
 		setOrientation(orientation);
@@ -47,8 +48,6 @@ public class Cell {
 		if (coordinate == null) {
 			throw new NullPointerException("coordinate can't be null.");
 		}
-		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
-
 		this.coordinate = coordinate;
 	}
 
@@ -58,10 +57,11 @@ public class Cell {
 	 * @param offset The offset to adapt the coordinates with.
 	 */
 	public void setCoordinateOffset(Coordinate offset) {
-		Coordinate copy = new Coordinate(offset.getX(), offset.getY());
-
-		coordinate.setX(coordinate.getX() + copy.getX());
-		coordinate.setY(coordinate.getY() + copy.getY());
+		if (offset == null) {
+			throw new NullPointerException("offset can't be null.");
+		}
+		coordinate = coordinate.setX(coordinate.getX() + offset.getX());
+		coordinate = coordinate.setY(coordinate.getY() + offset.getY());
 	}
 
 	/**
@@ -70,8 +70,7 @@ public class Cell {
 	 * @return the coordinate for this cell.
 	 */
 	public Coordinate getCoordinate() {
-		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
-		return copy;
+		return coordinate;
 	}
 
 	/**
@@ -88,14 +87,14 @@ public class Cell {
 	 * 
 	 * @param type The elementType to set the type of this cell to.
 	 */
-	public void setType(ElementType type) {
+	public void setType(ElementType type)  {
 		if (type == null) {
 			type = ElementType.SAND;
 		}
 		this.type = type;
 
 		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
-
+		createImage();
 	}
 
 	/**
@@ -112,9 +111,10 @@ public class Cell {
 	 * 
 	 * @param orientation The new orientation to be associated with this Cell
 	 */
-	public void setOrientation(Orientation orientation) {
+	public void setOrientation(Orientation orientation)  {
 		this.orientation = orientation;
 		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
+		createImage();
 	}
 
 	private String getResourcePath() {
@@ -126,14 +126,7 @@ public class Cell {
 
 	}
 
-	/**
-	 * Retrieve the image associated with this Cell
-	 * 
-	 * @return the image associated with this Cell
-	 * @throws IOException if an error occurs during reading or when notable to
-	 *                     create required ImageInputStream
-	 */
-	public BufferedImage getImage() throws IOException {
+	private void createImage()  {
 		BufferedImage image;
 		InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
 
@@ -144,10 +137,18 @@ public class Cell {
 				image = ImageIO.read(in);
 			} catch (IOException e) {
 				System.err.println("Got an error while loading in image");
-				throw e;
+				throw new RuntimeException(e);
 			}
 		}
+		this.image = image;
+	}
 
+	/**
+	 * Retrieve the image associated with this Cell
+	 * 
+	 * @return the image associated with this Cell
+	 */
+	public BufferedImage getImage() throws IOException {
 		return image;
 	}
 

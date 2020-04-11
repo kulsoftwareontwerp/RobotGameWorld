@@ -14,7 +14,7 @@ public interface GUIListener {
 	 * @param 	event
 	 * 			A RobotChangeEvent
 	 */
-	void onRobotChangeEvent(RobotChangeEvent event);
+	void onRobotChangeEvent(RobotChangedEvent event);
 
 	/**
 	 * Perform the needed actions in the GUI after a robot has been added to the domain.

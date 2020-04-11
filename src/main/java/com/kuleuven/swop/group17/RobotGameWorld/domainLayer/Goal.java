@@ -16,7 +16,7 @@ public class Goal extends Element {
 	 * Create a Goal
 	 * @param coordinate the coordinate for this goal.
 	 */
-	public Goal(Coordinate coordinate) {
+	Goal(Coordinate coordinate) {
 		super(coordinate);
 
 	}

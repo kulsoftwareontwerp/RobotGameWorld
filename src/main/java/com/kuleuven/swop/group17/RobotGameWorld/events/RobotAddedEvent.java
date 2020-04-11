@@ -22,7 +22,7 @@ public class RobotAddedEvent implements EventObject {
 	 * @param 	orientation
 	 * 			The orientation
 	 */
-	public RobotAddedEvent(Coordinate coordinate, Orientation orientation) {
+	RobotAddedEvent(Coordinate coordinate, Orientation orientation) {
 		super();
 		this.coordinate = coordinate;
 		this.orientation = orientation;
@@ -35,7 +35,7 @@ public class RobotAddedEvent implements EventObject {
 	 * @return the coordinate of the added robot
 	 */
 	public Coordinate getCoordinate() {
-		return new Coordinate(coordinate.getX(), coordinate.getY());
+		return coordinate;
 	}
 	
 	/**

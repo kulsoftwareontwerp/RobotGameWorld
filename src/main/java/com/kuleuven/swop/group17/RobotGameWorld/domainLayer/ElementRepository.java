@@ -27,7 +27,7 @@ public class ElementRepository {
 	/**
 	 * Create a new ElementRepository
 	 */
-	public ElementRepository() {
+	ElementRepository() {
 		factory=new ElementFactory();
 		elements=new HashSet<Element>();
 	}

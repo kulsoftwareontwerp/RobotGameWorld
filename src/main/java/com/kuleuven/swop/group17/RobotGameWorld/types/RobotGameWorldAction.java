@@ -16,7 +16,7 @@ public class RobotGameWorldAction implements Action {
 	 * Create a RobotGameWorldAction
 	 * @param action the SupportedAction associated with this RobotGameWorldAction. 
 	 */
-	public RobotGameWorldAction(SupportedActions action) {
+	RobotGameWorldAction(SupportedActions action) {
 		super();
 		this.action = action;
 	}

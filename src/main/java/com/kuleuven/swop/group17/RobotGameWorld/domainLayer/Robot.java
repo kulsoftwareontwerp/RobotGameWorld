@@ -17,7 +17,7 @@ public class Robot extends Element implements SolidElement {
 	 * Create a Robot element.
 	 * @param coordinate The coordinate for this robot.
 	 */
-	public Robot(Coordinate coordinate) {
+	Robot(Coordinate coordinate) {
 		super(coordinate);
 		this.orientation=null;
 	}

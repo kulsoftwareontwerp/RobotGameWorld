@@ -1,63 +1,65 @@
 package com.kuleuven.swop.group17.RobotGameWorld.types;
 
-
 /**
- * The concept of a coordinate, a point matching a certain location in the robotGameworld.
+ * The concept of a coordinate, a point matching a certain location in the
+ * robotGameworld. A coordinate is immutable.
  * 
  * @version 0.1
  * @author group17
  */
-public class Coordinate {
-	private int x;
-	private int y;
-	
+public final class Coordinate {
+	private final int x;
+	private final int y;
+
 	/**
 	 * Create a coordinate with the given x and y values.
-	 * @param x	The x value for the coordinate.
-	 * @param y	The y value for the coordinate.
+	 * 
+	 * @param x The x value for the coordinate.
+	 * @param y The y value for the coordinate.
 	 */
-	public Coordinate(int x, int y) {
+	Coordinate(int x, int y) {
 		super();
-		setX(x);
-		setY(y);
+		this.x=x;
+		this.y=y;
 	}
-	
+
 	/**
 	 * Retrieve the x value for the coordinate.
+	 * 
 	 * @return the x value for the coordinate.
 	 */
 	public int getX() {
 		return x;
 	}
-	
+
 	/**
 	 * Set the x value for the coordinate.
+	 * 
 	 * @param x The x value for the coordinate.
+	 * @return a new Coordinate with the changed X value.
 	 */
-	public void setX(int x) {
-		this.x = x;
+	public Coordinate setX(int x) {
+		return new Coordinate(x, this.y);
 	}
-	
+
 	/**
 	 * Retrieve the y value for the coordinate.
+	 * 
 	 * @return the y value for the coordinate.
 	 */
 	public int getY() {
 		return y;
 	}
-	
+
 	/**
 	 * Set the y value for the coordinate.
+	 * 
 	 * @param y The y value for the coordinate.
+	 * @return a new Coordinate with the changed X value.
 	 */
-	public void setY(int y) {
-		this.y = y;
+	public Coordinate setY(int y) {
+		return new Coordinate(this.x,y);
 	}
-
-	
-	
-	
-
 
 	@Override
 	public int hashCode() {
@@ -83,11 +85,5 @@ public class Coordinate {
 			return false;
 		return true;
 	}
-	
-	
-	
-	
-	
-	
-	
+
 }

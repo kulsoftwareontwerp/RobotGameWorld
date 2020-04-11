@@ -12,10 +12,11 @@ import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.ElementRepository;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Robot;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.SolidElement;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Wall;
+import com.kuleuven.swop.group17.RobotGameWorld.events.EventFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUISubject;
 import com.kuleuven.swop.group17.RobotGameWorld.events.RobotAddedEvent;
-import com.kuleuven.swop.group17.RobotGameWorld.events.RobotChangeEvent;
+import com.kuleuven.swop.group17.RobotGameWorld.events.RobotChangedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
@@ -30,15 +31,17 @@ public class RobotController implements GUISubject {
 
 	private Collection<GUIListener> guiListeners;
 	private ElementRepository elementRepository;
+	private EventFactory eventFactory;
 
 	public RobotController(ElementRepository elementRepository) {
 		super();
 		this.elementRepository = elementRepository;
 		this.guiListeners=new HashSet<GUIListener>();
+		eventFactory = new EventFactory();
 	}
 
 	private void fireRobotAddedEvent(Coordinate coordinate, Orientation orientation) {
-		RobotAddedEvent event = new RobotAddedEvent(coordinate, orientation);
+		RobotAddedEvent event = eventFactory.createRobotAddedEvent(coordinate, orientation);
 
 		for (GUIListener listener : guiListeners) {
 			listener.onRobotAddedEvent(event);
@@ -47,7 +50,7 @@ public class RobotController implements GUISubject {
 
 	private void fireRobotChangeEvent() {
 		Robot robot = getRobot();
-		RobotChangeEvent event = new RobotChangeEvent(robot.getCoordinate(), robot.getOrientation());
+		RobotChangedEvent event = eventFactory.createRobotChangedEvent(robot.getCoordinate(), robot.getOrientation());
 
 		for (GUIListener listener : guiListeners) {
 			listener.onRobotChangeEvent(event);
@@ -75,7 +78,7 @@ public class RobotController implements GUISubject {
 	void turnRight() {
 		Robot robot = getRobot();
 		Orientation currentOrientation = robot.getOrientation();
-		Orientation newOrientation = currentOrientation.getLeft();
+		Orientation newOrientation = currentOrientation.getRight();
 		robot.setOrientation(newOrientation);
 		fireRobotChangeEvent();
 	}
@@ -164,22 +167,23 @@ public class RobotController implements GUISubject {
 		Orientation currentRobotOrientation = robot.getOrientation();
 
 		Coordinate rc = robot.getCoordinate();
+		Coordinate toReturn = rc;
 
 		switch (currentRobotOrientation) {
 		case UP:
-			rc.setY(rc.getY() - 1);
+			toReturn= rc.setY(rc.getY() - 1);
 			break;
 		case DOWN:
-			rc.setY(rc.getY() + 1);
+			toReturn= rc.setY(rc.getY() + 1);
 			break;
 		case LEFT:
-			rc.setX(rc.getX() - 1);
+			toReturn= rc.setX(rc.getX() - 1);
 			break;
 		case RIGHT:
-			rc.setX(rc.getX() + 1);
+			toReturn= rc.setX(rc.getX() + 1);
 			break;
 		}
-		return rc;
+		return toReturn;
 	}
 
 	@Override

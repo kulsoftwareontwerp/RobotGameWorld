@@ -6,8 +6,9 @@ import java.util.Set;
 
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.ElementRepository;
-import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent;
+import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
+import com.kuleuven.swop.group17.RobotGameWorld.events.EventFactory;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUIListener;
 import com.kuleuven.swop.group17.RobotGameWorld.events.GUISubject;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
@@ -24,6 +25,7 @@ public class ElementController implements GUISubject {
 
 	private Collection<GUIListener> guiListeners;
 	private ElementRepository elementRepository;
+	private EventFactory eventFactory;
 
 	/**
 	 * Create an ElementController
@@ -37,26 +39,31 @@ public class ElementController implements GUISubject {
 			throw new NullPointerException("The given elementRepository can't be null.");
 		}
 
-		this.elementRepository = elementRepository;
-		this.guiListeners = new HashSet<GUIListener>();
+		createElementController(new EventFactory(), elementRepository,  new HashSet<GUIListener>());
+		
 
 	}
 
 	@SuppressWarnings("unused")
-	private ElementController(ElementRepository elementRepository, Collection<GUIListener> guiListeners) {
+	private ElementController(ElementRepository elementRepository, Collection<GUIListener> guiListeners,EventFactory eventFactory) {
+		createElementController(eventFactory, elementRepository, guiListeners);
+	}
+	
+	private void createElementController(EventFactory eventFactory,ElementRepository elementRepository, Collection<GUIListener> guiListeners) {
+		this.eventFactory=eventFactory;
 		this.elementRepository = elementRepository;
 		this.guiListeners = guiListeners;
 	}
 
 	private void fireElementAddedEvent(ElementType element, Coordinate coordinate) {
-		ElementAddedEvent event = new ElementAddedEvent(coordinate, element);
+		ElementAddedEvent event = eventFactory.createElementAddedEvent(coordinate, element);
 		for (GUIListener listener : guiListeners) {
 			listener.onElementAddedEvent(event);
 		}
 	}
 
 	private void fireElementClearedEvent() {
-		ElementsClearedEvent event = new ElementsClearedEvent();
+		ElementsClearedEvent event = eventFactory.createElementsClearedEvent();
 		for (GUIListener listener : guiListeners) {
 			listener.onElementsClearedEvent(event);
 		}
