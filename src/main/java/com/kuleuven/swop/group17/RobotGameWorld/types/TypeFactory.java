@@ -14,6 +14,9 @@ import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
  * @author group17
  */
 public class TypeFactory {
+	/**
+	 * Create a TypeFactory
+	 */
 	public TypeFactory() {
 		super();
 	}

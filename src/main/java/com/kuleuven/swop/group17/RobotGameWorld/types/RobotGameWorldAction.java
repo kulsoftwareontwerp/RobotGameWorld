@@ -10,7 +10,7 @@ import com.kuleuven.swop.group17.GameWorldApi.Action;
  * @author group17
  */
 public class RobotGameWorldAction implements Action {
-	SupportedActions action;
+	private SupportedActions action;
 
 	/**
 	 * Create a RobotGameWorldAction
@@ -18,6 +18,9 @@ public class RobotGameWorldAction implements Action {
 	 */
 	RobotGameWorldAction(SupportedActions action) {
 		super();
+		if(action==null) {
+			throw new NullPointerException("The given action can't be null");
+		}
 		this.action = action;
 	}
 	

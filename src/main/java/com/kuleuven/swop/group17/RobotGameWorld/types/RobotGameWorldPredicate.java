@@ -11,6 +11,9 @@ public class RobotGameWorldPredicate implements Predicate {
 	 */
 	RobotGameWorldPredicate(SupportedPredicates predicate) {
 		super();
+		if(predicate==null) {
+			throw new NullPointerException("The given predicate can't be null");
+		}
 		this.predicate = predicate;
 	}
 

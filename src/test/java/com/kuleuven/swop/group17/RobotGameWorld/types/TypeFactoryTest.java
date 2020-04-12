@@ -3,13 +3,18 @@
  */
 package com.kuleuven.swop.group17.RobotGameWorld.types;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+
+import java.util.HashSet;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.kuleuven.swop.group17.RobotGameWorld.domainLayer.Element;
 
 /**
  * TypeFactoryTest
@@ -19,12 +24,14 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TypeFactoryTest {
+	private TypeFactory tf;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		this.tf = new TypeFactory();
 	}
 
 	/**
@@ -35,51 +42,54 @@ public class TypeFactoryTest {
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#TypeFactory()}.
-	 */
-	@Test
-	public void testTypeFactory() {
-		fail("Not yet implemented");
-	}
-
-	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createSnapshot(java.util.Set)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createSnapshot(java.util.Set)}.
 	 */
 	@Test
 	public void testCreateSnapshot() {
-		fail("Not yet implemented");
+		RobotGameWorldSnapshot snapshot = tf.createSnapshot(new HashSet<Element>());
+		assertNotNull(snapshot);
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createType()}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createType()}.
 	 */
 	@Test
 	public void testCreateType() {
-		fail("Not yet implemented");
+		RobotGameWorldType type = tf.createType();
+		assertNotNull(type);
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createAction(com.kuleuven.swop.group17.RobotGameWorld.types.SupportedActions)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createAction(com.kuleuven.swop.group17.RobotGameWorld.types.SupportedActions)}.
 	 */
 	@Test
 	public void testCreateAction() {
-		fail("Not yet implemented");
+		RobotGameWorldAction action = tf.createAction(mock(SupportedActions.class));
+		assertNotNull(action);
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createPredicate(com.kuleuven.swop.group17.RobotGameWorld.types.SupportedPredicates)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createPredicate(com.kuleuven.swop.group17.RobotGameWorld.types.SupportedPredicates)}.
 	 */
 	@Test
 	public void testCreatePredicate() {
-		fail("Not yet implemented");
+		RobotGameWorldPredicate predicate = tf.createPredicate(mock(SupportedPredicates.class));
+		assertNotNull(predicate);
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createCoordinate(int, int)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory#createCoordinate(int, int)}.
 	 */
 	@Test
 	public void testCreateCoordinate() {
-		fail("Not yet implemented");
+		Coordinate coordinate = tf.createCoordinate(0,0);
+		assertNotNull(coordinate);
+	
 	}
 
 }

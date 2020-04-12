@@ -5,11 +5,17 @@ package com.kuleuven.swop.group17.RobotGameWorld.types;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import com.kuleuven.swop.group17.RobotGameWorld.applicationLayer.RobotGameWorld;
 
 /**
  * CoordinateTest
@@ -35,59 +41,164 @@ public class CoordinateTest {
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#hashCode()}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#hashCode()}.
 	 */
 	@Test
 	public void testHashCode() {
-		fail("Not yet implemented");
+		// The hashcode is considered to be not good if in the following range -1000 to 1000
+		// 5% or more of the hashcodes are equal.
+
+		HashMap<Integer, Integer> hashCodes = new HashMap<Integer, Integer>();
+		for (int x1 = -1000; x1 <= 1000; x1++) {
+			for (int y1 = 1000; y1 >= -1000; y1--) {
+				Coordinate c1 = new Coordinate(x1, y1);
+				int hashCode = c1.hashCode();
+				hashCodes.putIfAbsent(hashCode, 0);
+				hashCodes.put(hashCode, hashCodes.get(hashCode) + 1);
+			}
+		}
+
+		double percent = 0.05;
+		assertFalse(hashCodes.values().stream().anyMatch(s-> s>=(percent*2000)));
+		
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#Coordinate(int, int)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#Coordinate(int, int)}.
 	 */
 	@Test
 	public void testCoordinate() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+
+		try {
+			Field f = Coordinate.class.getDeclaredField("x");
+			f.setAccessible(true);
+			assertTrue("x was not initialised", (int) f.get(c) == 5);
+			f = Coordinate.class.getDeclaredField("y");
+			f.setAccessible(true);
+			assertTrue("y was not initialised", (int) f.get(c) == 3);
+
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			fail("One or more of the required fields were not declared.");
+		}
+
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#getX()}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#getX()}.
 	 */
 	@Test
 	public void testGetX() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+
+		assertEquals(5, c.getX());
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#setX(int)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#setX(int)}.
 	 */
 	@Test
 	public void testSetX() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+
+		Coordinate c2 = c.setX(9);
+
+		assertEquals(9, c2.getX());
+		assertEquals(5, c.getX());
+
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#getY()}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#getY()}.
 	 */
 	@Test
 	public void testGetY() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+
+		assertEquals(3, c.getY());
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#setY(int)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#setY(int)}.
 	 */
 	@Test
 	public void testSetY() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+
+		Coordinate c2 = c.setY(9);
+
+		assertEquals(9, c2.getY());
+		assertEquals(3, c.getY());
 	}
 
 	/**
-	 * Test method for {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
 	 */
 	@Test
 	public void testEqualsObject() {
-		fail("Not yet implemented");
+		Coordinate c = new Coordinate(5, 3);
+		assertTrue(c.equals(c));
 	}
 
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 */
+	@Test
+	public void testNotEqualsNull() {
+		Coordinate c = new Coordinate(5, 3);
+		assertFalse(c.equals(null));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 */
+	@SuppressWarnings("unlikely-arg-type")
+	@Test
+	public void testNotEqualsOtherClass() {
+		Coordinate c = new Coordinate(5, 3);
+
+		assertFalse(c.equals(ElementType.SAND));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 */
+	@Test
+	public void testNotEqualsOtherCoordinateWrongX() {
+		Coordinate c = new Coordinate(5, 3);
+		Coordinate c2 = new Coordinate(3, 3);
+		assertFalse(c.equals(c2));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 */
+	@Test
+	public void testNotEqualsOtherCoordinateWrongY() {
+		Coordinate c = new Coordinate(5, 3);
+		Coordinate c2 = new Coordinate(5, 9);
+		assertFalse(c.equals(c2));
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate#equals(java.lang.Object)}.
+	 */
+	@Test
+	public void testEqualsOtherCoordinate() {
+		Coordinate c = new Coordinate(5, 9);
+		Coordinate c2 = new Coordinate(5, 9);
+		assertTrue(c.equals(c2));
+	}
 }

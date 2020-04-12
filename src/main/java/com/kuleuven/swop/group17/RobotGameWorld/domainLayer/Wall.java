@@ -3,7 +3,6 @@ package com.kuleuven.swop.group17.RobotGameWorld.domainLayer;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 
-
 /**
  * A wall is a type of element in the RobotGameWorld, it has a type and a
  * coordinate.
@@ -15,6 +14,7 @@ public class Wall extends Element implements SolidElement {
 
 	/**
 	 * Create a wall
+	 * 
 	 * @param coordinate The coordinate of this wall.
 	 */
 	Wall(Coordinate coordinate) {
@@ -26,6 +26,18 @@ public class Wall extends Element implements SolidElement {
 		return ElementType.WALL;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
 
+		Wall wall = (Wall) obj;
+		if (wall.getType() != getType())
+			return false;
+
+		return true;
+	}
 
 }

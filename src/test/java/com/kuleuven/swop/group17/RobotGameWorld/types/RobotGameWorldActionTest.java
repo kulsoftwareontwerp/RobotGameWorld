@@ -4,10 +4,15 @@
 package com.kuleuven.swop.group17.RobotGameWorld.types;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import java.lang.reflect.Field;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -19,6 +24,9 @@ import org.mockito.junit.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RobotGameWorldActionTest {
+
+	@Rule
+	public ExpectedException exceptionRule = ExpectedException.none();
 
 	/**
 	 * @throws java.lang.Exception
@@ -40,7 +48,26 @@ public class RobotGameWorldActionTest {
 	 */
 	@Test
 	public void testRobotGameWorldAction() {
-		fail("Not yet implemented");
+		RobotGameWorldAction action = new RobotGameWorldAction(SupportedActions.MOVEFORWARD);
+		try {
+			Field f = RobotGameWorldAction.class.getDeclaredField("action");
+			f.setAccessible(true);
+			assertTrue("action was not initialised", (SupportedActions) f.get(action) == SupportedActions.MOVEFORWARD);
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+			fail("One or more of the required fields were not declared.");
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.types.RobotGameWorldAction#RobotGameWorldAction(com.kuleuven.swop.group17.RobotGameWorld.types.SupportedActions)}.
+	 */
+	@Test
+	public void testRobotGameWorldActionNullAction() {
+		exceptionRule.expect(NullPointerException.class);
+		exceptionRule.expectMessage("The given action can't be null");
+		RobotGameWorldAction action = new RobotGameWorldAction(null);
+
 	}
 
 	/**
@@ -49,7 +76,9 @@ public class RobotGameWorldActionTest {
 	 */
 	@Test
 	public void testGetAction() {
-		fail("Not yet implemented");
+		RobotGameWorldAction action = new RobotGameWorldAction(SupportedActions.MOVEFORWARD);
+		assertEquals(SupportedActions.MOVEFORWARD, action.getAction());
+
 	}
 
 	/**
@@ -58,7 +87,11 @@ public class RobotGameWorldActionTest {
 	 */
 	@Test
 	public void testToString() {
-		fail("Not yet implemented");
+		SupportedActions sa = mock(SupportedActions.class);
+		when(sa.toString()).thenReturn("action test");
+		RobotGameWorldAction action = new RobotGameWorldAction(sa);
+
+		assertEquals("action test", action.toString());
 	}
 
 }

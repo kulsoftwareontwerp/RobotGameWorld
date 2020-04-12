@@ -14,6 +14,7 @@ public class Goal extends Element {
 
 	/**
 	 * Create a Goal
+	 * 
 	 * @param coordinate the coordinate for this goal.
 	 */
 	Goal(Coordinate coordinate) {
@@ -26,6 +27,18 @@ public class Goal extends Element {
 		return ElementType.GOAL;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		Goal goal = (Goal) obj;
+		if (goal.getType() != getType())
+			return false;
 
+		return true;
+	}
 
 }
