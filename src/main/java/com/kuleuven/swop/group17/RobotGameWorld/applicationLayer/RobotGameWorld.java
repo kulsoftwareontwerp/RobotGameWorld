@@ -82,6 +82,7 @@ public class RobotGameWorld implements GameWorld {
 		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(1, 2));
 		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(2, 2));
 		elementController.addElement(ElementType.WALL, typeFactory.createCoordinate(3, 2));
+		elementController.addElement(ElementType.GOAL, typeFactory.createCoordinate(2, 1));
 	}
 
 	/**
