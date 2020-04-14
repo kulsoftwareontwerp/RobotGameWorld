@@ -105,6 +105,7 @@ public class RobotCanvas implements GUIListener {
 
 	private void clearCells() {
 		cells.clear();
+		initCells();
 	}
 
 	@Override
