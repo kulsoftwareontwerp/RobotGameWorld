@@ -32,7 +32,6 @@ public class RobotChangedEvent implements EventObject {
 	 * @return the coordinate of the robot
 	 */
 	public Coordinate getCoordinate() {
-
 		return coordinate;
 	}
 

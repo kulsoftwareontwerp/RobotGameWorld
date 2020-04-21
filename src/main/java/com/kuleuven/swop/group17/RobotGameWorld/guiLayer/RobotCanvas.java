@@ -3,7 +3,6 @@ package com.kuleuven.swop.group17.RobotGameWorld.guiLayer;
 import java.awt.Graphics;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
@@ -14,7 +13,13 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
-
+/**
+ * 
+ * RobotCanvas
+ *
+ * @version 0.1
+ * @author group17
+ */
 public class RobotCanvas implements GUIListener {
 	private HashMap<Coordinate, Cell> cells;
 	private CellFactory factory;

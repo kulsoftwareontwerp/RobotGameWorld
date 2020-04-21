@@ -28,6 +28,12 @@ public class EventFactory {
 	 * @return a new RobotChangeEvent.
 	 */
 	public RobotChangedEvent createRobotChangedEvent(Coordinate coordinate,Orientation orientation) {
+		if(coordinate==null) {
+			throw new NullPointerException("A robot needs to have a coordinate");
+		}
+		if(orientation==null) {
+			throw new NullPointerException("A robot needs to have an orientation");
+		}
 		return new RobotChangedEvent(coordinate, orientation);
 	}
 	
@@ -38,6 +44,12 @@ public class EventFactory {
 	 * @return a new RobotAddedEvent.
 	 */
 	public RobotAddedEvent createRobotAddedEvent(Coordinate coordinate,Orientation orientation) {
+		if(coordinate==null) {
+			throw new NullPointerException("A robot needs to have a coordinate");
+		}
+		if(orientation==null) {
+			throw new NullPointerException("A robot needs to have an orientation");
+		}
 		return new RobotAddedEvent(coordinate, orientation);
 	}
 	
@@ -56,6 +68,12 @@ public class EventFactory {
 	 * @return a new ElementAddedEvent
 	 */
 	public ElementAddedEvent createElementAddedEvent(Coordinate coordinate,ElementType type) {
+		if(coordinate==null) {
+			throw new NullPointerException("An element needs to have a coordinate");
+		}
+		if(type==null) {
+			throw new NullPointerException("An element needs to have a type");
+		}
 		return new ElementAddedEvent(coordinate, type);
 	}
 	
