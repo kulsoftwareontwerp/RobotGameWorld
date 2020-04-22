@@ -3,6 +3,8 @@ package com.kuleuven.swop.group17.RobotGameWorld.guiLayer;
 import java.awt.Graphics;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
@@ -13,6 +15,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
 import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
 import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
+
 /**
  * 
  * RobotCanvas
@@ -21,36 +24,26 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
  * @author group17
  */
 public class RobotCanvas implements GUIListener {
-	private HashMap<Coordinate, Cell> cells;
+	private Map<Coordinate, Cell> cells;
 	private CellFactory factory;
 	private final int OFFSET_GAMEAREA_CELLS = 4;
 	private static final int CELL_SIZE = 50;
 	private TypeFactory typeFactory;
 
 	RobotCanvas() {
-		cells = new HashMap<Coordinate, Cell>();
-		factory = new CellFactory();
-		typeFactory = new TypeFactory();
+		createRobotCanvas(new HashMap<Coordinate, Cell>(), new CellFactory(), new TypeFactory());
+	}
+
+	@SuppressWarnings("unused")
+	private RobotCanvas(Map<Coordinate, Cell> cells, CellFactory factory, TypeFactory typeFactory) {
+		createRobotCanvas(cells, factory, typeFactory);
+	}
+
+	private void createRobotCanvas(Map<Coordinate, Cell> cells, CellFactory factory, TypeFactory typeFactory) {
+		this.cells = cells;
+		this.factory = factory;
+		this.typeFactory = typeFactory;
 		initCells();
-	}
-
-	private void addCell(Cell cell) {
-		cell.setCoordinateOffset(typeFactory.createCoordinate(0, OFFSET_GAMEAREA_CELLS));
-
-		cells.put(cell.getCoordinate(), cell);
-	}
-
-	// look for robot, set that cell to SAND
-	private void moveRobot(Coordinate coordinate, Orientation orientation) {
-		try {
-			Cell previousCell = getCells().stream().filter(e -> e.getType() == ElementType.ROBOT).findFirst().get();
-			previousCell.setType(null);
-			Cell robot = factory.createCell(ElementType.ROBOT, coordinate, orientation);
-			addCell(robot);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void initCells() {
@@ -82,6 +75,22 @@ public class RobotCanvas implements GUIListener {
 
 	}
 
+	private void addCell(Cell cell) {
+		cell.setCoordinateOffset(typeFactory.createCoordinate(0, OFFSET_GAMEAREA_CELLS));
+
+		cells.put(cell.getCoordinate(), cell);
+	}
+
+	// look for robot, set that cell to SAND
+	private void moveRobot(Coordinate coordinate, Orientation orientation) {
+		Optional<Cell> previousCell = getCells().stream().filter(e -> e.getType() == ElementType.ROBOT).findFirst();
+		if (previousCell.isPresent()) {
+			previousCell.get().setType(null);
+			Cell robot = factory.createCell(ElementType.ROBOT, coordinate, orientation);
+			addCell(robot);
+		}
+	}
+
 	private Collection<Cell> getCells() {
 		return cells.values();
 	}
@@ -90,20 +99,19 @@ public class RobotCanvas implements GUIListener {
 	 * Paint the RobotGameArea on the given graphics
 	 * 
 	 * @param g the graphics on which the RobotGameArea should be drawn.
+	 * @throws IllegalArgumentException when the given graphics object is null.
+	 * 
 	 */
 	public void paint(Graphics g) {
+		if (g == null) {
+			throw new IllegalArgumentException("Graphics object can't be null");
+		}
 		g.drawLine(0, 0, 0, g.getClipBounds().height);
 		g.drawLine(0, 200, g.getClipBounds().width, 200);
 		g.drawLine(0, 400, g.getClipBounds().width, 400);
-		try {
-			for (Cell cell : getCells()) {
-
-				g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
-						cell.getCoordinate().getY() * CELL_SIZE, null);
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (Cell cell : getCells()) {
+			g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
+					cell.getCoordinate().getY() * CELL_SIZE, null);
 		}
 
 	}
@@ -115,22 +123,34 @@ public class RobotCanvas implements GUIListener {
 
 	@Override
 	public void onRobotChangeEvent(RobotChangedEvent event) {
+		if (event == null) {
+			throw new IllegalArgumentException("event can't be null");
+		}
 		moveRobot(event.getCoordinate(), event.getOrientation());
 	}
 
 	@Override
 	public void onRobotAddedEvent(RobotAddedEvent event) {
+		if (event == null) {
+			throw new IllegalArgumentException("event can't be null");
+		}
 		addCell(factory.createCell(ElementType.ROBOT, event.getCoordinate(), event.getOrientation()));
 
 	}
 
 	@Override
 	public void onElementAddedEvent(ElementAddedEvent event) {
+		if (event == null) {
+			throw new IllegalArgumentException("event can't be null");
+		}
 		addCell(factory.createCell(event.getType(), event.getCoordinate()));
 	}
 
 	@Override
 	public void onElementsClearedEvent(ElementsClearedEvent event) {
+		if (event == null) {
+			throw new IllegalArgumentException("event can't be null");
+		}
 		clearCells();
 
 	}

@@ -23,11 +23,15 @@ public class CellFactory {
 	 * @param coordinate  The coordinate of the cell.
 	 * @param orientation The orientation of the cell
 	 * @return The cell corresponding to the given parameters.
-	 * @throws NullPointerException when coordinate is null.
+	 * @throws IllegalArgumentException when coordinate is null.
+	 * @throws IllegalArgumentException when orientation is null.
 	 */
 	public Cell createCell(ElementType type, Coordinate coordinate, Orientation orientation) {
 		if (coordinate == null) {
-			throw new NullPointerException("coordinate can't be null.");
+			throw new IllegalArgumentException("coordinate can't be null.");
+		}
+		if (orientation == null) {
+			throw new IllegalArgumentException("orientation can't be null.");
 		}
 
 		return new Cell(coordinate, orientation, type);
@@ -39,10 +43,12 @@ public class CellFactory {
 	 * @param type       The ElementType corresponding to the Cell.
 	 * @param coordinate The coordinate of the cell.
 	 * @return The cell corresponding to the given parameters.
-	 * @throws NullPointerException when coordinate is null.
+	 * @throws IllegalArgumentException when coordinate is null.
 	 */
 	public Cell createCell(ElementType type, Coordinate coordinate) {
-
-		return createCell(type, coordinate, null);
+		if (coordinate == null) {
+			throw new IllegalArgumentException("coordinate can't be null.");
+		}
+		return createCell(type, coordinate, Orientation.UP);
 	}
 }
