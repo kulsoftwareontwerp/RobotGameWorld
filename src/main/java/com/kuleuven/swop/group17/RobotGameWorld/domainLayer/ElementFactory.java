@@ -20,9 +20,17 @@ public class ElementFactory {
 	 * @param coordinate	The coordinate to set this element to.
 	 * @throws 	IllegalArgumentException
 	 * 			thrown when type is null or sand.
-	 * @return an element with the givent type and coordinate.
+	 * @throws 	IllegalArgumentException
+	 * 			thrown when coordinate is null.
+	 * @return an element with the given type and coordinate.
 	 */
 	public Element createElement(ElementType type, Coordinate coordinate) {
+		if(coordinate==null) {
+			throw new IllegalArgumentException("Coordinate can't be null");
+		}
+		if(type==null) {
+			throw new IllegalArgumentException("ElementType can't be null");
+		}
 		Element element;
 		switch (type) {
 		case GOAL:

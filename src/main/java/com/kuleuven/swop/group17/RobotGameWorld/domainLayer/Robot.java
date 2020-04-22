@@ -21,7 +21,7 @@ public class Robot extends Element implements SolidElement {
 	 */
 	Robot(Coordinate coordinate) {
 		super(coordinate);
-		this.orientation = null;
+		setOrientation(Orientation.UP);
 	}
 
 	/**
@@ -38,8 +38,13 @@ public class Robot extends Element implements SolidElement {
 	 * 
 	 * @param orientation the orientation to which the robot orientation must be
 	 *                    set.
+	 * @throws IllegalArgumentException thrown when coordinate is null.
+	 * 
 	 */
 	public void setOrientation(Orientation orientation) {
+		if (orientation == null) {
+			throw new IllegalArgumentException("orientation can't be null");
+		}
 		this.orientation = orientation;
 	}
 
@@ -52,12 +57,10 @@ public class Robot extends Element implements SolidElement {
 	public boolean equals(Object obj) {
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
 
-		Robot robot = (Robot) obj;
-		if (robot.getType() != getType())
+		if (!(obj instanceof Robot))
 			return false;
+		Robot robot = (Robot) obj;
 		if (robot.getOrientation() != getOrientation())
 			return false;
 

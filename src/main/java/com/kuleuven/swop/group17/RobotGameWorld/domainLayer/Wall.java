@@ -30,11 +30,7 @@ public class Wall extends Element implements SolidElement {
 	public boolean equals(Object obj) {
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-
-		Wall wall = (Wall) obj;
-		if (wall.getType() != getType())
+		if(!(obj instanceof Wall))
 			return false;
 
 		return true;

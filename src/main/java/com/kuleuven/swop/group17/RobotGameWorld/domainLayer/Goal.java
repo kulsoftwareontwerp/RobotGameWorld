@@ -19,8 +19,9 @@ public class Goal extends Element {
 	 */
 	Goal(Coordinate coordinate) {
 		super(coordinate);
-
 	}
+
+
 
 	@Override
 	public ElementType getType() {
@@ -31,13 +32,8 @@ public class Goal extends Element {
 	public boolean equals(Object obj) {
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
+		if(!(obj instanceof Goal))
 			return false;
-		
-		Goal goal = (Goal) obj;
-		if (goal.getType() != getType())
-			return false;
-
 		return true;
 	}
 

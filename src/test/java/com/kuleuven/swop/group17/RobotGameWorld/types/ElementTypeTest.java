@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.kuleuven.swop.group17.RobotGameWorld.types;
 
 import static org.junit.Assert.*;

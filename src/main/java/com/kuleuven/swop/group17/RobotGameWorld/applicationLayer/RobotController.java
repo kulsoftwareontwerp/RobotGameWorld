@@ -177,7 +177,7 @@ public class RobotController implements GUISubject {
 
 	private Robot getRobot() throws NoSuchElementException {
 
-		Optional<Robot> robot = elementRepository.getElementByType(ElementType.ROBOT).stream().map(s -> (Robot) s)
+		Optional<Robot> robot = elementRepository.getElementsByType(ElementType.ROBOT).stream().map(s -> (Robot) s)
 				.findFirst();
 		if (robot.isPresent()) {
 			return robot.get();

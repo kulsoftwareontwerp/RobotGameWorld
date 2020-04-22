@@ -84,7 +84,7 @@ public class RobotControllerTest {
 		guiListeners.clear();
 		guiListeners.add(listener);
 
-		when(elementRepository.getElementByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
+		when(elementRepository.getElementsByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
 
 			@Override
 			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
@@ -151,7 +151,7 @@ public class RobotControllerTest {
 		exceptionRule.expect(NoSuchElementException.class);
 		exceptionRule.expectMessage(excMessage);
 
-		when(elementRepository.getElementByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
+		when(elementRepository.getElementsByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
 
 			@Override
 			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
@@ -186,7 +186,7 @@ public class RobotControllerTest {
 		exceptionRule.expect(NoSuchElementException.class);
 		exceptionRule.expectMessage(excMessage);
 
-		when(elementRepository.getElementByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
+		when(elementRepository.getElementsByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
 
 			@Override
 			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
@@ -220,7 +220,7 @@ public class RobotControllerTest {
 		exceptionRule.expect(NoSuchElementException.class);
 		exceptionRule.expectMessage(excMessage);
 
-		when(elementRepository.getElementByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
+		when(elementRepository.getElementsByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
 
 			@Override
 			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
@@ -597,7 +597,7 @@ public class RobotControllerTest {
 		exceptionRule.expect(NoSuchElementException.class);
 		exceptionRule.expectMessage(excMessage);
 
-		when(elementRepository.getElementByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
+		when(elementRepository.getElementsByType(ElementType.ROBOT)).thenAnswer(new Answer<Set<Element>>() {
 
 			@Override
 			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
