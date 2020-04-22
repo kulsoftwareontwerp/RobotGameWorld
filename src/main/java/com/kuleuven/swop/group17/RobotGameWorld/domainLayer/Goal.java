@@ -14,18 +14,27 @@ public class Goal extends Element {
 
 	/**
 	 * Create a Goal
+	 * 
 	 * @param coordinate the coordinate for this goal.
 	 */
-	public Goal(Coordinate coordinate) {
+	Goal(Coordinate coordinate) {
 		super(coordinate);
-
 	}
+
+
 
 	@Override
 	public ElementType getType() {
 		return ElementType.GOAL;
 	}
 
-
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj))
+			return false;
+		if(!(obj instanceof Goal))
+			return false;
+		return true;
+	}
 
 }

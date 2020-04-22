@@ -9,7 +9,7 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  * @version 0.1
  * @author group17
  */
-public class RobotChangeEvent implements EventObject {
+public class RobotChangedEvent implements EventObject {
 
 	private Coordinate coordinate;
 	private Orientation orientation;
@@ -20,7 +20,7 @@ public class RobotChangeEvent implements EventObject {
 	 * @param coordinate  The coordinate to which the element was added.
 	 * @param orientation The orientation
 	 */
-	public RobotChangeEvent(Coordinate coordinate, Orientation orientation) {
+	RobotChangedEvent(Coordinate coordinate, Orientation orientation) {
 		super();
 		this.coordinate = coordinate;
 		this.orientation = orientation;
@@ -32,8 +32,7 @@ public class RobotChangeEvent implements EventObject {
 	 * @return the coordinate of the robot
 	 */
 	public Coordinate getCoordinate() {
-
-		return new Coordinate(coordinate.getX(), coordinate.getY());
+		return coordinate;
 	}
 
 	/**

@@ -9,8 +9,11 @@ public class RobotGameWorldPredicate implements Predicate {
 	 * Create a RobotGameWorldPredicate
 	 * @param predicate the SupportedPredicate associated with this RobotGameWorldPredicate. 
 	 */
-	public RobotGameWorldPredicate(SupportedPredicates predicate) {
+	RobotGameWorldPredicate(SupportedPredicates predicate) {
 		super();
+		if(predicate==null) {
+			throw new NullPointerException("The given predicate can't be null");
+		}
 		this.predicate = predicate;
 	}
 

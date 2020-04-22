@@ -19,7 +19,7 @@ public class RobotGameWorldType implements GameWorldType {
 	/**
 	 * Create a robotGameWorldType
 	 */
-	public RobotGameWorldType() {
+	RobotGameWorldType() {
 		super();
 	}
 

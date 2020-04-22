@@ -2,6 +2,7 @@ package com.kuleuven.swop.group17.RobotGameWorld.events;
 
 import com.kuleuven.swop.group17.RobotGameWorld.types.Coordinate;
 import com.kuleuven.swop.group17.RobotGameWorld.types.ElementType;
+import com.kuleuven.swop.group17.RobotGameWorld.types.TypeFactory;
 
 /**
  * The event thrown when an element has been added to the domain.
@@ -22,7 +23,7 @@ public class ElementAddedEvent implements EventObject {
 	 * @param 	type
 	 * 			The ElementType
 	 */
-	public ElementAddedEvent(Coordinate coordinate, ElementType type) {
+	ElementAddedEvent(Coordinate coordinate, ElementType type) {
 		super();
 		this.coordinate = coordinate;
 		this.type = type;
@@ -34,7 +35,7 @@ public class ElementAddedEvent implements EventObject {
 	 */
 	public Coordinate getCoordinate() {
 		
-		return new Coordinate(coordinate.getX(), coordinate.getY());
+		return coordinate;
 	}
 
 	/**

@@ -23,8 +23,11 @@ public class RobotGameWorldSnapshot implements GameWorldSnapshot {
 	 * Create a snapshot of the robotGameWorld.
 	 * @param elements All the elements from the robotGameWorld that define the current state.
 	 */
-	public RobotGameWorldSnapshot(Set<Element> elements) {
+	RobotGameWorldSnapshot(Set<Element> elements) {
 		super();
+		if(elements==null) {
+			throw new NullPointerException("The given elements can't be null");
+		}
 		setElements(elements);
 	}
 
@@ -38,7 +41,13 @@ public class RobotGameWorldSnapshot implements GameWorldSnapshot {
 
 	
 	private void setElements(Set<Element> elements) {		
-		this.elements = new HashSet<Element>(elements);
+		HashSet<Element> elems = new HashSet<Element>();
+		for(Element e:elements ) {
+			elems.add(e.clone());
+		}
+		
+		
+		this.elements = elems;
 	}
 	
 }

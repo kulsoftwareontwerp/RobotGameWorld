@@ -19,11 +19,12 @@ import com.kuleuven.swop.group17.RobotGameWorld.types.Orientation;
  */
 public class Cell {
 
-
 	private ElementType type;
 	private String resourcePath;
 	private Coordinate coordinate;
 	private Orientation orientation;
+	private BufferedImage image;
+	private boolean triggerIOException;
 
 	/**
 	 * Create a cell with the given ElementType,Orientation and Coordinate
@@ -31,8 +32,11 @@ public class Cell {
 	 * @param type        The ElementType corresponding to the Cell.
 	 * @param coordinate  The coordinate of the cell.
 	 * @param orientation The orientation of the cell
+	 * @throws IllegalArgumentException when coordinate is null.
+	 * @throws IllegalArgumentException when orientation is null.
 	 */
 	public Cell(Coordinate coordinate, Orientation orientation, ElementType type) {
+		triggerIOException=false;
 		setCoordinate(coordinate);
 		setType(type);
 		setOrientation(orientation);
@@ -42,13 +46,12 @@ public class Cell {
 	 * Set the Coordinate of this Cell.
 	 * 
 	 * @param coordinate The coordinate to set this cell to.
+	 * @throws IllegalArgumentException when coordinate is null.
 	 */
 	public void setCoordinate(Coordinate coordinate) {
 		if (coordinate == null) {
-			throw new NullPointerException("coordinate can't be null.");
+			throw new IllegalArgumentException("coordinate can't be null.");
 		}
-		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
-
 		this.coordinate = coordinate;
 	}
 
@@ -56,12 +59,14 @@ public class Cell {
 	 * Change the coordinate of this cell with the given offset.
 	 * 
 	 * @param offset The offset to adapt the coordinates with.
+	 * @throws IllegalArgumentException when the given offset is null.
 	 */
 	public void setCoordinateOffset(Coordinate offset) {
-		Coordinate copy = new Coordinate(offset.getX(), offset.getY());
-
-		coordinate.setX(coordinate.getX() + copy.getX());
-		coordinate.setY(coordinate.getY() + copy.getY());
+		if (offset == null) {
+			throw new IllegalArgumentException("offset can't be null.");
+		}
+		coordinate = coordinate.setX(coordinate.getX() + offset.getX());
+		coordinate = coordinate.setY(coordinate.getY() + offset.getY());
 	}
 
 	/**
@@ -70,8 +75,7 @@ public class Cell {
 	 * @return the coordinate for this cell.
 	 */
 	public Coordinate getCoordinate() {
-		Coordinate copy = new Coordinate(coordinate.getX(), coordinate.getY());
-		return copy;
+		return coordinate;
 	}
 
 	/**
@@ -95,7 +99,7 @@ public class Cell {
 		this.type = type;
 
 		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
-
+		createImage();
 	}
 
 	/**
@@ -111,10 +115,15 @@ public class Cell {
 	 * Set the orientation associated with this Cell
 	 * 
 	 * @param orientation The new orientation to be associated with this Cell
+	 * @throws IllegalArgumentException when orientation is null.
 	 */
 	public void setOrientation(Orientation orientation) {
+		if (orientation == null) {
+			throw new IllegalArgumentException("orientation can't be null.");
+		}
 		this.orientation = orientation;
 		setResourcePath("images/" + getType().toOrientationString(getOrientation()) + ".png");
+		createImage();
 	}
 
 	private String getResourcePath() {
@@ -126,28 +135,32 @@ public class Cell {
 
 	}
 
+	private void createImage() {
+		BufferedImage image;
+		InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
+
+		if (in == null ) {
+			throw new IllegalArgumentException("image for Cell is not found");
+		} else {
+			try {
+				if(triggerIOException) {
+					throw new IOException();
+				}
+				image = ImageIO.read(in);
+			} catch (IOException e) {
+				System.err.println("Got an error while loading in image");
+				throw new RuntimeException(e);
+			}
+		}
+		this.image = image;
+	}
+
 	/**
 	 * Retrieve the image associated with this Cell
 	 * 
 	 * @return the image associated with this Cell
-	 * @throws IOException if an error occurs during reading or when notable to
-	 *                     create required ImageInputStream
 	 */
-	public BufferedImage getImage() throws IOException {
-		BufferedImage image;
-		InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
-
-		if (in == null) {
-			throw new IllegalArgumentException("image for Cell is not found ");
-		} else {
-			try {
-				image = ImageIO.read(in);
-			} catch (IOException e) {
-				System.err.println("Got an error while loading in image");
-				throw e;
-			}
-		}
-
+	public BufferedImage getImage() {
 		return image;
 	}
 
@@ -155,8 +168,8 @@ public class Cell {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((coordinate == null) ? 0 : coordinate.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + coordinate.hashCode();
+		result = prime * result +  type.hashCode();
 		return result;
 	}
 
@@ -169,10 +182,7 @@ public class Cell {
 		if (getClass() != obj.getClass())
 			return false;
 		Cell other = (Cell) obj;
-		if (coordinate == null) {
-			if (other.coordinate != null)
-				return false;
-		} else if (!coordinate.equals(other.coordinate))
+		if (!coordinate.equals(other.coordinate))
 			return false;
 		if (type != other.type)
 			return false;
