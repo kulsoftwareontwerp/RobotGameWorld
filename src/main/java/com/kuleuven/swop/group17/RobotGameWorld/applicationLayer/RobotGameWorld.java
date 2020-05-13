@@ -1,6 +1,7 @@
 package com.kuleuven.swop.group17.RobotGameWorld.applicationLayer;
 
 import java.awt.Graphics;
+import java.util.stream.Collectors;
 
 import com.kuleuven.swop.group17.GameWorldApi.Action;
 import com.kuleuven.swop.group17.GameWorldApi.GameWorld;
@@ -192,13 +193,16 @@ public class RobotGameWorld implements GameWorld {
 					"The given GameWorldSnapshot is not a valid snapshot for a RobotGameWorld.");
 		}
 		elementController.clearElements();
-		for (Element element : ((RobotGameWorldSnapshot) state).getElements()) {
-			if (element.getType() == ElementType.ROBOT) {
-				robotController.addRobot(element.getCoordinate(), ((Robot) element).getOrientation());
-			} else {
-				elementController.addElement(element.getType(), element.getCoordinate());
-			}
+		for (Element element : ((RobotGameWorldSnapshot) state).getElements().stream().filter(s->s.getType()!=ElementType.ROBOT).collect(Collectors.toSet())) {
+				elementController.addElement(element.getType(), element.getCoordinate());	
 		}
+		
+		//Add robot as last
+		for (Element element : ((RobotGameWorldSnapshot) state).getElements().stream().filter(s->s.getType()==ElementType.ROBOT).collect(Collectors.toSet())) {
+			robotController.addRobot(element.getCoordinate(), ((Robot) element).getOrientation());
+		}
+		
+		
 	}
 
 	/**

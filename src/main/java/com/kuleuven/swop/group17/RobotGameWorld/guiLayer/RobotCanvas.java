@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent;
 import com.kuleuven.swop.group17.RobotGameWorld.events.ElementsClearedEvent;
@@ -29,6 +31,7 @@ public class RobotCanvas implements GUIListener {
 	private final int OFFSET_GAMEAREA_CELLS = 4;
 	private static final int CELL_SIZE = 50;
 	private TypeFactory typeFactory;
+	private Map<Coordinate, ElementType> previousType;
 
 	RobotCanvas() {
 		createRobotCanvas(new HashMap<Coordinate, Cell>(), new CellFactory(), new TypeFactory());
@@ -43,6 +46,7 @@ public class RobotCanvas implements GUIListener {
 		this.cells = cells;
 		this.factory = factory;
 		this.typeFactory = typeFactory;
+		this.previousType=new HashMap<Coordinate, ElementType>();
 		initCells();
 	}
 
@@ -77,15 +81,20 @@ public class RobotCanvas implements GUIListener {
 
 	private void addCell(Cell cell) {
 		cell.setCoordinateOffset(typeFactory.createCoordinate(0, OFFSET_GAMEAREA_CELLS));
-
+		
+		Cell currentCell= cells.get(cell.getCoordinate());
+		if(currentCell!=null &&  currentCell.getType()==ElementType.GOAL) {
+			previousType.put(currentCell.getCoordinate(), currentCell.getType());
+		}
 		cells.put(cell.getCoordinate(), cell);
 	}
 
-	// look for robot, set that cell to SAND
+
+	// look for robot, set that cell to the elementType that was previously present.
 	private void moveRobot(Coordinate coordinate, Orientation orientation) {
 		Optional<Cell> previousCell = getCells().stream().filter(e -> e.getType() == ElementType.ROBOT).findFirst();
 		if (previousCell.isPresent()) {
-			previousCell.get().setType(null);
+			previousCell.get().setType(this.previousType.get(previousCell.get().getCoordinate()));
 			Cell robot = factory.createCell(ElementType.ROBOT, coordinate, orientation);
 			addCell(robot);
 		}
@@ -109,11 +118,16 @@ public class RobotCanvas implements GUIListener {
 		g.drawLine(0, 0, 0, g.getClipBounds().height);
 		g.drawLine(0, 200, g.getClipBounds().width, 200);
 		g.drawLine(0, 400, g.getClipBounds().width, 400);
-		for (Cell cell : getCells()) {
+		Set<Cell> goal =  getCells().stream().filter(s->s.getType()==ElementType.GOAL).collect(Collectors.toSet());
+		for (Cell cell : getCells().stream().filter(s->s.getType()!=ElementType.ROBOT).collect(Collectors.toSet())) {
 			g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
 					cell.getCoordinate().getY() * CELL_SIZE, null);
 		}
-
+		//Draw the robot as last, over any other shape
+		for(Cell cell : getCells().stream().filter(s->s.getType()==ElementType.ROBOT).collect(Collectors.toSet())){
+			g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
+					cell.getCoordinate().getY() * CELL_SIZE, null);
+		}
 	}
 
 	private void clearCells() {
