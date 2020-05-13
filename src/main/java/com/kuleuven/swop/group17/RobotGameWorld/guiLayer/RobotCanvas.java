@@ -118,13 +118,7 @@ public class RobotCanvas implements GUIListener {
 		g.drawLine(0, 0, 0, g.getClipBounds().height);
 		g.drawLine(0, 200, g.getClipBounds().width, 200);
 		g.drawLine(0, 400, g.getClipBounds().width, 400);
-		Set<Cell> goal =  getCells().stream().filter(s->s.getType()==ElementType.GOAL).collect(Collectors.toSet());
-		for (Cell cell : getCells().stream().filter(s->s.getType()!=ElementType.ROBOT).collect(Collectors.toSet())) {
-			g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
-					cell.getCoordinate().getY() * CELL_SIZE, null);
-		}
-		//Draw the robot as last, over any other shape
-		for(Cell cell : getCells().stream().filter(s->s.getType()==ElementType.ROBOT).collect(Collectors.toSet())){
+		for (Cell cell : getCells()) {
 			g.drawImage(cell.getImage(), cell.getCoordinate().getX() * CELL_SIZE,
 					cell.getCoordinate().getY() * CELL_SIZE, null);
 		}

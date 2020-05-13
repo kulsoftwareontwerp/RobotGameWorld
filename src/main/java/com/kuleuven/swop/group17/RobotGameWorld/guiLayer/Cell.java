@@ -144,7 +144,7 @@ public class Cell {
 	}
 
 	private void createImage() {
-		if (!cachedImages.containsKey(getResourcePath())) {
+		if (!cachedImages.containsKey(getResourcePath())||triggerIOException) {
 
 			BufferedImage image;
 			InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());

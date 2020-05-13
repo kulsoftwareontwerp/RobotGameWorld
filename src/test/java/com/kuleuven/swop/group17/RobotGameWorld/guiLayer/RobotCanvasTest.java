@@ -221,6 +221,23 @@ public class RobotCanvasTest {
 		assertEquals(e.getCoordinate(), coordinate.getValue());
 		assertEquals(e.getType(), type.getValue());
 	}
+	
+	/**
+	 * Test method for
+	 * {@link com.kuleuven.swop.group17.RobotGameWorld.guiLayer.RobotCanvas#onElementAddedEvent(com.kuleuven.swop.group17.RobotGameWorld.events.ElementAddedEvent)}.
+	 */
+	@Test
+	public void testOnElementAddedEventOverGoalElement() {
+		ElementAddedEvent e = eventFactory.createElementAddedEvent(typeFactory.createCoordinate(0, 0),
+				ElementType.GOAL);
+		canvas.onElementAddedEvent(e);
+		 e = eventFactory.createElementAddedEvent(typeFactory.createCoordinate(0, 0),
+				ElementType.ROBOT);
+		canvas.onElementAddedEvent(e);
+		verify(factory,atLeastOnce()).createCell(type.capture(), coordinate.capture());
+		assertEquals(e.getCoordinate(), coordinate.getValue());
+		assertEquals(e.getType(), type.getValue());
+	}
 
 	/**
 	 * Test method for

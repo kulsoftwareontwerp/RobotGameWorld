@@ -138,7 +138,7 @@ public class CellTest {
 			f = Cell.class.getDeclaredField("type");
 			f.setAccessible(true);
 			assertEquals(ElementType.WALL, f.get(c));
-			f = Cell.class.getDeclaredField("image");
+			f = Cell.class.getDeclaredField("cachedImages");
 			f.setAccessible(true);
 			assertNotNull(f.get(c));
 		} catch (Exception e) {
@@ -187,7 +187,7 @@ public class CellTest {
 			f = Cell.class.getDeclaredField("type");
 			f.setAccessible(true);
 			assertEquals(ElementType.SAND, f.get(c));
-			f = Cell.class.getDeclaredField("image");
+			f = Cell.class.getDeclaredField("cachedImages");
 			f.setAccessible(true);
 			assertNotNull(f.get(c));
 		} catch (Exception e) {
