@@ -3,6 +3,8 @@ package com.kuleuven.swop.group17.RobotGameWorld.guiLayer;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -23,7 +25,9 @@ public class Cell {
 	private String resourcePath;
 	private Coordinate coordinate;
 	private Orientation orientation;
-	private BufferedImage image;
+
+	private static Map<String, BufferedImage> cachedImages;
+
 	private boolean triggerIOException;
 
 	/**
@@ -36,10 +40,14 @@ public class Cell {
 	 * @throws IllegalArgumentException when orientation is null.
 	 */
 	public Cell(Coordinate coordinate, Orientation orientation, ElementType type) {
-		triggerIOException=false;
+		triggerIOException = false;
+		if (cachedImages == null) {
+			cachedImages = new HashMap<String, BufferedImage>();
+		}
 		setCoordinate(coordinate);
 		setType(type);
 		setOrientation(orientation);
+
 	}
 
 	/**
@@ -136,23 +144,26 @@ public class Cell {
 	}
 
 	private void createImage() {
-		BufferedImage image;
-		InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
+		if (!cachedImages.containsKey(getResourcePath())) {
 
-		if (in == null ) {
-			throw new IllegalArgumentException("image for Cell is not found");
-		} else {
-			try {
-				if(triggerIOException) {
-					throw new IOException();
+			BufferedImage image;
+			InputStream in = getClass().getClassLoader().getResourceAsStream(getResourcePath());
+
+			if (in == null) {
+				throw new IllegalArgumentException("image for Cell is not found");
+			} else {
+				try {
+					if (triggerIOException) {
+						throw new IOException();
+					}
+					image = ImageIO.read(in);
+				} catch (IOException e) {
+					System.err.println("Got an error while loading in image");
+					throw new RuntimeException(e);
 				}
-				image = ImageIO.read(in);
-			} catch (IOException e) {
-				System.err.println("Got an error while loading in image");
-				throw new RuntimeException(e);
 			}
+			cachedImages.put(getResourcePath(),image);
 		}
-		this.image = image;
 	}
 
 	/**
@@ -161,7 +172,8 @@ public class Cell {
 	 * @return the image associated with this Cell
 	 */
 	public BufferedImage getImage() {
-		return image;
+//		return image;
+		return cachedImages.get(getResourcePath());
 	}
 
 	@Override
@@ -169,7 +181,7 @@ public class Cell {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + coordinate.hashCode();
-		result = prime * result +  type.hashCode();
+		result = prime * result + type.hashCode();
 		return result;
 	}
 
