@@ -108,10 +108,9 @@ public class RobotController implements GUISubject {
 		Coordinate cifor = getCoordinatesInFrontOfRobot();
 		Set<Element> elements = elementRepository.getElements(cifor);
 
-		// Check if the robot stays within the boundries of the Game Area, else do
+		// Check if the robot stays within the boundaries of the Game Area, else do
 		// nothing
-		if (cifor.getX() < 0 || cifor.getX() > elementRepository.getGameAreaWidth() - 1 || cifor.getY() < 0
-				|| cifor.getY() > elementRepository.getGameAreaHeight() - 1) {
+		if (checkIfCoordinateNotWithinGameBoundries(cifor)) {
 			return;
 		}
 
@@ -131,6 +130,16 @@ public class RobotController implements GUISubject {
 
 		fireRobotChangeEvent();
 
+	}
+
+	/**
+	 * Checks if the given coordinate is not within the game boundaries
+	 * @param coordinate The coordinate to check
+	 * @return a flag indicating if the coordinate is not within the game boundaries.
+	 */
+	boolean checkIfCoordinateNotWithinGameBoundries(Coordinate coordinate) {
+		return (coordinate.getX() < 0 || coordinate.getX() > elementRepository.getGameAreaWidth() - 1 || coordinate.getY() < 0
+				|| coordinate.getY() > elementRepository.getGameAreaHeight() - 1);
 	}
 
 	/**
@@ -163,6 +172,12 @@ public class RobotController implements GUISubject {
 	 */
 	Boolean checkIfWallInFront() {
 		Coordinate cifor = getCoordinatesInFrontOfRobot();
+		
+		if(checkIfCoordinateNotWithinGameBoundries(cifor)) {
+			return true;
+		}
+		
+		
 		Set<Element> elements = elementRepository.getElements(cifor);
 
 		Iterator<Element> iterator = elements.iterator();
