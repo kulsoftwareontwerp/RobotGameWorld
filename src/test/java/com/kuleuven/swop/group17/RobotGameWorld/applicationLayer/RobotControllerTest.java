@@ -260,10 +260,8 @@ public class RobotControllerTest {
 		}
 	}
 	
-	
-	
 	@Test
-	public void testMoveForwardWithBoundaryInFrontUp() {
+	public void testMoveForwardWithBoundaryInFront() {
 		TypeFactory tf = new TypeFactory();
 		Coordinate rc = tf.createCoordinate(0, 0);
 		when(robot.getOrientation()).thenReturn(Orientation.UP);
@@ -284,59 +282,34 @@ public class RobotControllerTest {
 	}
 	
 	@Test
-	public void testMoveForwardWithBoundaryInFrontLeft() {
+	public void testBoundaryInFrontUp() {
 		TypeFactory tf = new TypeFactory();
-		Coordinate rc = tf.createCoordinate(0, 0);
-		when(robot.getOrientation()).thenReturn(Orientation.LEFT);
-		when(robot.getCoordinate()).thenReturn(rc);
+		Coordinate rc = tf.createCoordinate(0, -1);
+		assertTrue(controller.checkIfCoordinateNotWithinGameBoundries(rc));
 
-		when(elementRepository.getElements(any(Coordinate.class))).thenAnswer(new Answer<Set<Element>>() {
-
-			@Override
-			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
-				Set<Element> elements = new HashSet<Element>();
-				return elements;
-			}
-		});
-
-		moveForwardChecks(rc.getX(), rc.getY(), 0);
 	}
 	
 	@Test
-	public void testMoveForwardWithBoundaryInFrontDown() {
+	public void testBoundaryInFrontLeft() {
 		TypeFactory tf = new TypeFactory();
-		Coordinate rc = tf.createCoordinate(4, 4);
-		when(robot.getOrientation()).thenReturn(Orientation.DOWN);
-		when(robot.getCoordinate()).thenReturn(rc);
+		Coordinate rc = tf.createCoordinate(-1, 0);
+		assertTrue(controller.checkIfCoordinateNotWithinGameBoundries(rc));
 
-		when(elementRepository.getElements(any(Coordinate.class))).thenAnswer(new Answer<Set<Element>>() {
-
-			@Override
-			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
-				Set<Element> elements = new HashSet<Element>();
-				return elements;
-			}
-		});
-		
-		moveForwardChecks(rc.getX(), rc.getY(), 0);
 	}
 	
 	@Test
-	public void testMoveForwardWithBoundaryInFrontRight() {
+	public void testBoundaryInFrontDown() {
 		TypeFactory tf = new TypeFactory();
-		Coordinate rc = tf.createCoordinate(4, 4);
-		when(robot.getOrientation()).thenReturn(Orientation.RIGHT);
-		when(robot.getCoordinate()).thenReturn(rc);
+		Coordinate rc = tf.createCoordinate(4, 5);
+		assertTrue(controller.checkIfCoordinateNotWithinGameBoundries(rc));
 
-		when(elementRepository.getElements(any(Coordinate.class))).thenAnswer(new Answer<Set<Element>>() {
-
-			@Override
-			public Set<Element> answer(InvocationOnMock invocation) throws Throwable {
-				Set<Element> elements = new HashSet<Element>();
-				return elements;
-			}
-		});
-		moveForwardChecks(rc.getX(), rc.getY(),0);
+	}
+	
+	@Test
+	public void testBoundaryInFrontRight() {
+		TypeFactory tf = new TypeFactory();
+		Coordinate rc = tf.createCoordinate(5, 4);
+		assertTrue(controller.checkIfCoordinateNotWithinGameBoundries(rc));
 	}
 	
 	
@@ -840,6 +813,18 @@ public class RobotControllerTest {
 		});
 
 		checkIfWallInFrontChecks(false, 2);
+
+	}
+	
+
+	@Test
+	public void testCheckIfWallInFrontWithBoundaryInFront() {
+		TypeFactory tf = new TypeFactory();
+		Coordinate rc = tf.createCoordinate(0, 0);
+		when(robot.getOrientation()).thenReturn(Orientation.LEFT);
+		when(robot.getCoordinate()).thenReturn(rc);
+	
+		checkIfWallInFrontChecks(true, 1);
 
 	}
 
